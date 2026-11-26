@@ -86,12 +86,16 @@ textarea.field{resize:vertical;min-height:64px}
 .chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
 .chip{font:inherit;font-size:12px;border:1px solid var(--line);background:var(--field);color:var(--ink);border-radius:999px;padding:4px 10px;cursor:pointer}
 .chip:hover{border-color:var(--accent)}
+.warnhint{background:var(--warn-bg);color:var(--warn);border-radius:8px;padding:6px 10px}
 .toggle{display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer}
 .toggle input{accent-color:var(--accent);width:16px;height:16px}
 
 .previewcol{position:sticky;top:max(16px,env(safe-area-inset-top,0px));min-width:0}
 @media (max-width:920px){.previewcol{position:static}}
 .previewhead{display:flex;justify-content:space-between;align-items:baseline;margin:0 4px 10px;gap:8px;flex-wrap:wrap}
+.ph-title{display:flex;flex-direction:column;gap:0;min-width:0}
+.pdfbig{width:100%;justify-content:center;margin-top:14px;padding:13px 16px;font-size:15px}
+.previewhead{align-items:center!important}
 .previewhead b{font-family:var(--f-brand);font-size:15px;font-weight:600}
 .scaler{width:100%;overflow:hidden;border-radius:8px;box-shadow:0 18px 50px -24px rgba(20,40,90,.45),0 0 0 1px var(--line)}
 .scaler>.sheet{transform-origin:top left}
@@ -221,10 +225,6 @@ textarea.field{resize:vertical;min-height:64px}
     <div class="actions">
       <button class="btn" id="btnHist" type="button" aria-expanded="false" aria-controls="histPanel">Riwayat <span id="histCount"></span></button>
       <button class="btn ghost" id="btnNew" type="button">+ Invoice baru</button>
-      <button class="btn primary" id="btnPdf" type="button">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0l-5-5m5 5l5-5M4 19h16"/></svg>
-        <span id="pdfLabel">Download PDF</span>
-      </button>
     </div>
   </div>
 
@@ -346,8 +346,9 @@ textarea.field{resize:vertical;min-height:64px}
     </form>
 
     <div class="previewcol">
-      <div class="previewhead"><b>Pratinjau</b><span class="hint">Ukuran A4, persis seperti PDF-nya</span></div>
+      <div class="previewhead"><div class="ph-title"><b>Pratinjau</b><span class="hint">Ukuran A4, persis seperti PDF-nya</span></div><button class="btn primary sm pdfbtn" id="btnPdfTop" type="button"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0l-5-5m5 5l5-5M4 19h16"/></svg><span class="pdflabel">Download PDF</span></button></div>
       <div class="scaler" id="scaler"><div class="sheet" id="sheet"></div></div>
+      <button class="btn primary pdfbtn pdfbig" id="btnPdfBottom" type="button"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0l-5-5m5 5l5-5M4 19h16"/></svg><span class="pdflabel">Download PDF</span></button>
     </div>
   </div>
 </div>
@@ -781,14 +782,22 @@ function renderItems(){
       <div class="row three">
         <label class="l">Qty<input class="field" id="it_q_${idx}" data-f="qty" type="number" min="0" value="${esc(it.qty)}"></label>
         <label class="l">Harga (Rp)<input class="field money" id="it_p_${idx}" data-f="price" inputmode="numeric" value="${it.price?nf.format(it.price):''}"></label>
-        <label class="l">Harga coret<input class="field money" id="it_w_${idx}" data-f="was" inputmode="numeric" placeholder="opsional" value="${it.was?nf.format(it.was):''}"></label>
+        <label class="l">Harga normal (dicoret)<input class="field money" id="it_w_${idx}" data-f="was" inputmode="numeric" placeholder="opsional" value="${it.was?nf.format(it.was):''}"></label>
       </div>
+      <span class="hint warnhint" id="it_h_${idx}"${wasHint(it)?'':' hidden'}>${esc(wasHint(it))}</span>
     </div>`).join('');
+}
+function wasHint(it){
+  const was = Number(it.was)||0, pr = Number(it.price)||0;
+  if(!was || was > pr) return '';
+  return 'Harga normal belum tampil di invoice karena harus lebih besar dari harga yang ditagih (' + rp(pr) + '). Isi harga sebelum diskon, misalnya ' + rp(Math.round(pr*1.2/50000)*50000 || pr+50000) + '.';
 }
 itemsBox.addEventListener('input', e=>{
   const el = e.target, f = el.dataset.f; if(!f) return;
   const i = +el.closest('.item').dataset.i;
   state.items[i][f] = (f==='price'||f==='was') ? digits(el.value) : f==='qty' ? (parseFloat(el.value)||0) : el.value;
+  const h = document.getElementById('it_h_'+i);
+  if(h){ const t = wasHint(state.items[i]); h.textContent = t; h.hidden = !t; }
   changed();
 });
 itemsBox.addEventListener('click', e=>{
@@ -829,7 +838,8 @@ function toast(msg){ toastEl.textContent = msg; toastEl.hidden = false; clearTim
 /* ---------- PDF ---------- */
 const inClaude = !!(window.claude && window.claude.use);
 const dlPromise = inClaude ? window.claude.use('downloads').catch(()=>null) : Promise.resolve(null);
-const btnPdf = document.getElementById('btnPdf'), pdfLabel = document.getElementById('pdfLabel');
+const pdfBtns = Array.from(document.querySelectorAll('.pdfbtn'));
+const setPdfBusy = busy => pdfBtns.forEach(b=>{ b.disabled = busy; b.querySelector('.pdflabel').textContent = busy ? 'Menyiapkan PDF…' : 'Download PDF'; });
 
 async function buildPdf(o){
   o = o || {};
@@ -866,9 +876,10 @@ function fileName(){
   return clean('Invoice ' + (state.inv.no||'') + (state.client.brand?' - '+state.client.brand:'') + (state.paid?' (LUNAS)':'')) + '.pdf';
 }
 
-btnPdf.addEventListener('click', async ()=>{
+pdfBtns.forEach(b=>b.addEventListener('click', async ()=>{
   if(!window.jspdf || !window.html2canvas){ toast('Pembuat PDF belum termuat. Cek koneksi lalu muat ulang halaman.'); return; }
-  btnPdf.disabled = true; pdfLabel.textContent = 'Menyiapkan PDF…';
+  if(pdfBtns[0].disabled) return;
+  setPdfBusy(true);
   try{
     const pdf = await buildPdf();
     const name = fileName();
@@ -888,9 +899,9 @@ btnPdf.addEventListener('click', async ()=>{
   }catch(e){
     toast('PDF gagal dibuat. Coba muat ulang halaman.');
   }finally{
-    btnPdf.disabled = false; pdfLabel.textContent = 'Download PDF';
+    setPdfBusy(false);
   }
-});
+}));
 
 /* ================= HISTORY =================
    Each saved invoice is one document. On claude.ai it lives in the viewer's private
