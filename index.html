@@ -2,1051 +2,496 @@
 <html lang="id">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="description" content="nota. — bikin invoice gaya struk untuk konten kreator, gratis, langsung jadi PDF.">
-<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
-</head>
-<body>
-<title>nota.</title>
-<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>nota. — invoice untuk konten kreator</title>
+<meta name="description" content="Bikin invoice endorse yang rapi dan estetik dalam 2 menit. Sekali bayar Rp20.000, tanpa langganan, langsung jadi PDF A4. Bisa di HP.">
+<meta property="og:title" content="nota. — invoice untuk konten kreator">
+<meta property="og:description" content="Tagih brand kayak pro. Sekali bayar Rp20.000, langsung PDF.">
+<meta name="theme-color" content="#0B1210">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=Fredoka:wght@400;500;600;700&family=Instrument+Sans:wght@500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=Fredoka:wght@500;600;700&family=Instrument+Sans:wght@500;600;700&display=swap">
 <style>
-/* Layout: form on the left, live A4 receipt-on-backdrop preview on the right (sticky); stacks on phones. */
 :root{
-  --bg:#F4F6F5; --panel:#FFFFFF; --ink:#13201E; --muted:#66736F; --line:#DFE5E3;
-  --accent:#0E3A35; --accent-soft:#EAF2EF; --field:#F8FAF9; --lime:#C4F36A; --ring:#D3DCD9;
-  --ok:#256B33; --ok-bg:#E1F3DC; --warn:#8A5A00; --warn-bg:#FFF0CC; --bad:#A8231B; --bad-bg:#FCE1DE;
-  --f-brand:"Instrument Sans", "Helvetica Neue", Arial, sans-serif;
-  --f-round:"Fredoka", "Nunito", "Segoe UI", system-ui, sans-serif;
-  /* title face on the invoice: uploaded Soft Edge first, then an installed copy, then Fredoka */
-  --f-title:"SoftEdgeUpload", "Soft Edge", "SoftEdge", "Fredoka", "Nunito", system-ui, sans-serif;
-  --f-mono:"Space Mono", ui-monospace, "Consolas", monospace;
-  --f-body:"DM Sans", "Segoe UI", system-ui, sans-serif;
+  color-scheme:dark;
+  --bg:#0B1210; --bg2:#0F1815; --surface:#131D1A; --line:#24312D; --line2:#33423D;
+  --ink:#EEF3F0; --muted:#8E9C97; --lime:#C4F36A; --lime-ink:#0E2A12; --green:#0E3A35;
+  --f-brand:"Instrument Sans","Helvetica Neue",Arial,sans-serif;
+  --f-mono:"Space Mono",ui-monospace,Consolas,monospace;
+  --f-body:"DM Sans","Segoe UI",system-ui,sans-serif;
+  --f-round:"Fredoka","Nunito",system-ui,sans-serif;
+  /* receipt theme (changed by the swatches) */
+  --r-ink:#22326A; --r-bd:#B4BEE0; --r-pp:#FFFCF6; --r-pop:#F6C344; --r-stamp:#D6455D;
 }
-@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
-  --bg:#0F1614; --panel:#17201E; --ink:#E8EFEC; --muted:#97A5A0; --line:#28332F;
-  --accent:#C4F36A; --accent-soft:#22302B; --field:#1C2623; --ring:#2E3A36; --ok:#9BE08A; --ok-bg:#1F3A24; --warn:#F2C86A; --warn-bg:#3A2F14; --bad:#FF9A90; --bad-bg:#3D1E1B; color-scheme:dark } }
-:root[data-theme="dark"]{
-  --bg:#0F1614; --panel:#17201E; --ink:#E8EFEC; --muted:#97A5A0; --line:#28332F;
-  --accent:#C4F36A; --accent-soft:#22302B; --field:#1C2623; --ring:#2E3A36; --ok:#9BE08A; --ok-bg:#1F3A24; --warn:#F2C86A; --warn-bg:#3A2F14; --bad:#FF9A90; --bad-bg:#3D1E1B; color-scheme:dark }
-
 *{box-sizing:border-box}
-body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:14px;line-height:1.5}
-.wrap{max-width:1320px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 48px}
-
-.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:20px}
-.logo{display:flex;align-items:center;gap:14px}
-.mark{width:40px;height:40px;flex:none}
-.wordmark{font-family:var(--f-brand);font-size:30px;font-weight:600;letter-spacing:-.045em;line-height:1;color:var(--ink);display:inline-flex;align-items:baseline}
-.wordmark i{display:inline-block;width:.24em;height:.24em;border-radius:50%;background:var(--lime);margin-left:.07em}
-.logo span{font-family:var(--f-brand);font-size:12px;color:var(--muted);border-left:1px solid var(--line);padding-left:14px;line-height:1.3}
-.actions{display:flex;gap:8px;flex-wrap:wrap}
-.btn{font:inherit;font-weight:600;border:1.5px solid var(--line);background:var(--panel);color:var(--ink);padding:9px 16px;border-radius:999px;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
-.btn:hover{border-color:var(--accent)}
-.btn:focus-visible,.field:focus-visible,.sw:focus-visible,.chip:focus-visible{outline:2.5px solid var(--accent);outline-offset:2px}
-.btn.primary{background:var(--accent);color:var(--panel);border-color:var(--accent)}
-.btn.primary:hover{filter:brightness(1.1)}
-.btn[disabled]{opacity:.6;cursor:progress}
-.btn.ghost{border-style:dashed}
-
-.grid{display:grid;grid-template-columns:minmax(0,440px) minmax(0,1fr);gap:24px;align-items:start}
-@media (max-width:920px){.grid{grid-template-columns:minmax(0,1fr)}}
-
-.form{display:flex;flex-direction:column;gap:14px;min-width:0}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px}
-.card h2{font-family:var(--f-brand);font-size:15px;font-weight:600;letter-spacing:-.01em;margin:0 0 12px;display:flex;align-items:center;gap:8px}
-.card h2 i{font-style:normal;font-family:var(--f-mono);font-size:11px;color:var(--muted)}
-.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.row.three{grid-template-columns:2fr 1fr 1.3fr}
-@media (max-width:420px){.row{grid-template-columns:1fr}.row.three{grid-template-columns:1fr 1fr}}
-.stack{display:flex;flex-direction:column;gap:10px}
-label.l{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--muted);font-weight:500;min-width:0}
-.field{font:inherit;font-size:14px;color:var(--ink);background:var(--field);border:1.5px solid var(--line);border-radius:10px;padding:8px 10px;width:100%;min-width:0}
-.field:focus{border-color:var(--accent);outline:none}
-textarea.field{resize:vertical;min-height:64px}
-.hint{font-size:12px;color:var(--muted)}
-.sample{font-size:12px;background:var(--accent-soft);color:var(--ink);border-radius:12px;padding:10px 12px;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
-.sample button{font:inherit;font-size:12px;font-weight:600;background:none;border:0;color:var(--accent);cursor:pointer;text-decoration:underline;padding:0}
-
-.swatches{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
-@media (max-width:420px){.swatches{gap:8px}}
-.sw{aspect-ratio:1;max-width:100%;border-radius:50%;border:3px solid var(--panel);box-shadow:0 0 0 1.5px var(--line);cursor:pointer;padding:0}
-.sw[aria-pressed="true"]{box-shadow:0 0 0 2.5px var(--ink)}
-.swname{font-size:12px;color:var(--muted);margin-top:8px}
-.custom{display:flex;align-items:center;gap:10px;margin-top:12px;font-size:13px}
-.custom input[type=color]{width:40px;height:32px;border:1.5px solid var(--line);border-radius:8px;background:var(--field);padding:2px;cursor:pointer}
-
-.item{border:1.5px dashed var(--line);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:8px;position:relative}
-.item .x{position:absolute;top:8px;right:8px;width:26px;height:26px;border-radius:50%;border:0;background:var(--field);color:var(--muted);cursor:pointer;font-size:16px;line-height:1}
-.item .x:hover{color:var(--ink)}
-.item .num{font-family:var(--f-mono);font-size:11px;color:var(--muted)}
-.items{display:flex;flex-direction:column;gap:10px;margin-bottom:10px}
-.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
-.chip{font:inherit;font-size:12px;border:1px solid var(--line);background:var(--field);color:var(--ink);border-radius:999px;padding:4px 10px;cursor:pointer}
-.chip:hover{border-color:var(--accent)}
-.warnhint{background:var(--warn-bg);color:var(--warn);border-radius:8px;padding:6px 10px}
-.toggle{display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer}
-.toggle input{accent-color:var(--accent);width:16px;height:16px}
-
-.previewcol{position:sticky;top:max(16px,env(safe-area-inset-top,0px));min-width:0}
-@media (max-width:920px){.previewcol{position:static}}
-.previewhead{display:flex;justify-content:space-between;align-items:baseline;margin:0 4px 10px;gap:8px;flex-wrap:wrap}
-.ph-title{display:flex;flex-direction:column;gap:0;min-width:0}
-.pdfbig{width:100%;justify-content:center;margin-top:14px;padding:13px 16px;font-size:15px}
-.previewhead{align-items:center!important}
-.previewhead b{font-family:var(--f-brand);font-size:15px;font-weight:600}
-.scaler{width:100%;overflow:hidden;border-radius:8px;box-shadow:0 18px 50px -24px rgba(20,40,90,.45),0 0 0 1px var(--line)}
-.scaler>.sheet{transform-origin:top left}
-
-.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:999px;font-weight:600;font-size:13px;max-width:calc(100% - 32px);text-align:center;z-index:20}
-
-/* ---------- history + email panels ---------- */
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:20px}
-.panel-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
-.panel-head h2{font-family:var(--f-brand);font-size:18px;font-weight:600;letter-spacing:-.015em;margin:0}
-.btn.sm{padding:6px 12px;font-size:13px}
-.hstats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:14px}
-@media (max-width:520px){.hstats{grid-template-columns:minmax(0,1fr)}}
-.hstat{background:var(--field);border-radius:12px;padding:10px 12px;min-width:0}
-.hstat span{display:block;font-size:12px;color:var(--muted)}
-.hstat b{font-family:var(--f-brand);font-size:19px;font-weight:600;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
-.hlist{display:flex;flex-direction:column;gap:6px}
-.hrow{display:grid;grid-template-columns:minmax(0,1.7fr) 92px 130px 170px 150px;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;border:1px solid var(--line)}
-.hrow.current{border-color:var(--accent)}
-.hmain{min-width:0}
-.hmain b{display:block;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.hmain span{font-size:12px;color:var(--muted);display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.hdate{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
-.htotal{font-weight:600;font-variant-numeric:tabular-nums;text-align:right}
-.hact{display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap;align-items:center;font-size:12px}
-.st{display:inline-block;font-size:11.5px;font-weight:600;padding:2px 9px;border-radius:999px;margin:2px 4px 2px 0}
-.st.ok{background:var(--ok-bg);color:var(--ok)}
-.st.wait{background:var(--warn-bg);color:var(--warn)}
-.st.late{background:var(--bad-bg);color:var(--bad)}
-.st.sent{background:var(--accent-soft);color:var(--ink)}
-@media (max-width:860px){.hrow{grid-template-columns:minmax(0,1fr) auto}.hdate{display:none}.hrow>div:nth-child(4){grid-column:1}.hact{grid-column:2}}
-.note{font-size:12px;color:var(--muted);margin-top:10px}
-/* ---------- The invoice page: a receipt on a colored backdrop. Colors come from the chosen palette, not the app theme. ---------- */
-.sheet{width:794px;min-height:1123px;position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:58px 0;background:var(--bd);font-family:var(--f-body);color:var(--ink2)}
-.sheet .deco{position:absolute;pointer-events:none}
-.paper{width:560px;background:var(--pp);position:relative;z-index:1;padding:32px 40px 26px}
-.paper .edge{position:absolute;left:0;display:block}
-.paper .edge.top{top:-13px}
-.paper .edge.bot{bottom:-13px}
-.sheet{padding:58px 0 54px}
-.paper{margin-left:22px;box-shadow:0 14px 26px -16px rgba(0,0,0,.35)}
-.cover{position:absolute;left:18px;top:26px;right:30px;bottom:26px;background:#232328;border-radius:24px;box-shadow:0 22px 40px -22px rgba(0,0,0,.55)}
-.page2{position:absolute;left:62px;top:46px;right:42px;bottom:40px;background:#D9DADF;border-radius:6px 14px 14px 6px}
-.page{position:absolute;left:58px;top:42px;right:48px;bottom:46px;background:#F4F4F6;border-radius:6px 12px 12px 6px}
-.rail{position:absolute;left:24px;top:96px;bottom:96px;width:18px;border-radius:9px;background:linear-gradient(90deg,#7E828A,#F1F2F5 45%,#9EA2AA)}
-.rings{position:absolute;left:14px;top:118px;bottom:118px;width:76px;display:flex;flex-direction:column;justify-content:space-between}
-.rings svg{display:block}
-.tabs{position:absolute;right:8px;top:190px;display:flex;flex-direction:column;gap:12px}
-.tabs i{display:block;width:40px;height:88px;border-radius:0 10px 10px 0}
-.ticket{position:absolute;right:58px;top:210px;width:120px;height:230px;border-radius:6px;transform:rotate(5deg);padding:14px 12px;display:flex;flex-direction:column;align-items:flex-end;border-left:2px dashed rgba(0,0,0,.18)}
-.ticket span{font-family:var(--f-mono);font-size:9px;letter-spacing:.14em;color:rgba(0,0,0,.55)}
-.ticket b{font-family:var(--f-mono);font-size:22px;font-weight:700;color:rgba(0,0,0,.6);line-height:1}
-.tape{position:absolute;top:-24px;left:50%;margin-left:-62px;width:124px;height:38px;transform:rotate(-4deg);z-index:3}
-.sheet .deco.top{z-index:4}
-.thx{font-family:var(--f-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;text-align:center;color:var(--ink2);margin-top:14px}
-.thx + .bar{margin-top:6px}
-.burst{position:absolute;width:110px;height:110px;z-index:2;transform:rotate(-12deg)}
-.burst svg{position:absolute;left:0;top:0}
-.burst span{position:absolute;left:0;top:0;width:110px;height:110px;display:flex;align-items:center;justify-content:center;text-align:center;font-family:var(--f-title);font-weight:700;font-size:17px;line-height:1.05;letter-spacing:.04em;color:var(--ink2)}
-.tag{position:absolute;z-index:2;background:#ffffff;padding:9px 12px 6px;border-radius:4px;transform:rotate(-7deg);box-shadow:0 2px 0 rgba(0,0,0,.08)}
-.tag div{font-family:var(--f-mono);font-size:9px;letter-spacing:.18em;color:#1d1d22;text-align:center;margin-top:2px}
-
-.p-logo{width:64px;height:64px;border-radius:50%;overflow:hidden;margin:0 auto 10px}
-.p-logo img{width:100%;height:100%;object-fit:cover}
-.wm{font-family:var(--f-title);font-weight:700;font-size:44px;line-height:1;color:var(--ink2);text-align:center;letter-spacing:-.01em}
-.handle{font-family:var(--f-mono);font-size:11px;text-align:center;color:var(--mut);margin-top:6px}
-.kicker{display:flex;justify-content:center;gap:8px;align-items:center;font-family:var(--f-mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;margin-top:10px;color:var(--ink2)}
-.kicker b{font-weight:500}
-
+html{scroll-behavior:smooth;overflow-x:clip}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55;overflow-x:clip;-webkit-font-smoothing:antialiased}
+img,svg{max-width:100%}
+a{color:inherit}
+.wrap{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(safe-area-inset-right))}
 .mono{font-family:var(--f-mono)}
-.lab{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut)}
-.billto{display:grid;grid-template-columns:1.4fr 1fr;gap:18px;margin-top:16px}
-.billto .v{font-family:var(--f-title);font-size:16px;font-weight:600;line-height:1.25;margin-top:3px}
-.billto .s{font-size:11.5px;color:var(--mut);line-height:1.4;white-space:pre-line;margin-top:2px}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--lime);display:inline-flex;align-items:center;gap:10px}
+.eyebrow::before{content:"";width:22px;height:1px;background:currentColor}
 
-.dots{display:block;margin:4px 0}
-.cols{display:grid;grid-template-columns:30px 1fr 70px 112px;align-items:end;gap:0 6px}
-.thead{margin-top:14px;font-family:var(--f-mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink2);font-weight:500}
-.thead .r,.it .r{text-align:right}
-.it{padding:6px 0 2px}
-.it .n{font-family:var(--f-mono);font-size:9.5px;color:var(--mut);align-self:start;padding-top:9px}
-.it .t{font-family:var(--f-title);font-weight:600;font-size:19px;line-height:1.15;color:var(--ink2);letter-spacing:-.005em}
-.it .d{font-size:11.5px;line-height:1.35;color:var(--mut);margin-top:3px;white-space:pre-line}
-.it .q{font-size:11px;color:var(--mut);padding-bottom:2px}
-.it .was{display:block;font-family:var(--f-mono);font-size:10.5px;color:var(--mut);text-decoration:line-through}
-.it .p{font-family:var(--f-mono);font-size:13.5px;font-weight:700;color:var(--ink2);font-variant-numeric:tabular-nums}
+/* grain + grid backdrop */
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+  background-size:64px 64px;opacity:.28;mask-image:radial-gradient(ellipse 90% 60% at 50% 0%,#000 30%,transparent 75%);-webkit-mask-image:radial-gradient(ellipse 90% 60% at 50% 0%,#000 30%,transparent 75%)}
+main,header,footer{position:relative;z-index:1}
 
-.sum{position:relative;margin-top:10px;display:flex;flex-direction:column;gap:4px;font-family:var(--f-mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink2);font-variant-numeric:tabular-nums}
-.sum .ln{display:flex;justify-content:space-between;gap:12px}
-.sum .ln .was{text-decoration:line-through;color:var(--mut)}
-.sum .grand{display:flex;justify-content:space-between;align-items:baseline;margin-top:6px}
-.sum .grand span{font-weight:700;font-size:12px}
-.sum .grand b{font-family:var(--f-title);font-weight:700;font-size:28px;letter-spacing:-.01em;text-transform:none}
-.words{font-size:11.5px;color:var(--mut);text-align:right;margin-top:2px}
+/* ---------- nav ---------- */
+.nav{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:18px}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.logo svg{width:34px;height:34px}
+.wordmark{font-family:var(--f-brand);font-size:27px;font-weight:600;letter-spacing:-.045em;line-height:1;display:inline-flex;align-items:baseline}
+.wordmark i{display:inline-block;width:.24em;height:.24em;border-radius:50%;background:var(--lime);margin-left:.07em}
+.navlinks{display:flex;align-items:center;gap:22px}
+.navlinks a.t{font-size:14px;color:var(--muted);text-decoration:none}
+.navlinks a.t:hover{color:var(--ink)}
+@media (max-width:720px){.navlinks a.t{display:none}}
 
-.meta{display:flex;justify-content:space-between;gap:10px;font-family:var(--f-mono);font-size:10.5px;color:var(--ink2);margin-top:4px}
-.meta div{display:flex;flex-direction:column;gap:1px}
-.meta div:nth-child(2){text-align:center}
-.meta div:last-child{text-align:right}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;font-family:var(--f-brand);font-weight:600;font-size:15px;letter-spacing:-.01em;text-decoration:none;border-radius:999px;padding:12px 20px;border:1.5px solid var(--line2);color:var(--ink);background:transparent;transition:transform .15s,background .15s,border-color .15s;white-space:nowrap}
+.btn:hover{border-color:var(--ink)}
+.btn.lime{background:var(--lime);border-color:var(--lime);color:var(--lime-ink)}
+.btn.lime:hover{transform:translateY(-2px);box-shadow:0 10px 30px -10px rgba(196,243,106,.6)}
+.btn.big{font-size:17px;padding:16px 26px}
+.btn .arr{transition:transform .15s}
+.btn:hover .arr{transform:translateX(3px)}
+.btn:focus-visible,.sw:focus-visible,summary:focus-visible{outline:2.5px solid var(--lime);outline-offset:3px}
 
-.payrow{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:10px}
-.pay .bank{font-family:var(--f-title);font-size:15px;font-weight:600;margin-top:3px}
-.pay .acc{font-family:var(--f-mono);font-size:16px;font-weight:700;letter-spacing:.04em;color:var(--ink2)}
-.pay .s,.notes{font-size:11.5px;color:var(--mut);white-space:pre-line;line-height:1.4}
-.notes{margin-top:3px}
+/* ---------- hero ---------- */
+.hero{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:40px;align-items:center;padding-block:48px 72px}
+@media (max-width:920px){.hero{grid-template-columns:minmax(0,1fr);padding-top:24px;gap:28px}}
+h1{font-family:var(--f-brand);font-weight:700;font-size:clamp(46px,8.2vw,104px);line-height:.9;letter-spacing:-.055em;margin:18px 0 22px}
+h1 .hl{color:var(--lime);font-style:italic;letter-spacing:-.06em}
+h1 .strike{position:relative;color:var(--muted)}
+h1 .strike::after{content:"";position:absolute;left:-2%;right:-2%;top:54%;height:.09em;background:var(--lime);transform:rotate(-4deg)}
+.lede{font-size:clamp(16px,1.6vw,19px);color:#BAC6C1;max-width:520px;margin:0 0 28px}
+.cta-row{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.ticks{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:26px;font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.ticks span::before{content:"✓ ";color:var(--lime)}
 
-.bar{display:flex;flex-direction:column;align-items:center;margin-top:16px}
-.bar .cap{font-family:var(--f-mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink2);margin-top:3px}
-.foot{text-align:center;margin-top:10px;font-family:var(--f-mono);font-size:10.5px;color:var(--ink2);line-height:1.5}
-.foot b{font-weight:500;letter-spacing:.08em;text-transform:uppercase}
-.foot .sig{font-family:var(--f-title);font-size:13px;color:var(--mut);margin-top:4px}
+/* receipt mock */
+.stage{position:relative;min-height:540px;display:flex;justify-content:center;align-items:center}
+@media (max-width:920px){.stage{min-height:0;padding-block:20px 10px}}
+.binder{position:absolute;inset:6% 4% 4% 10%;background:#151516;border-radius:18px 28px 28px 18px;box-shadow:inset 0 0 0 1px #2A2A2E,0 30px 60px -20px #000;transform:rotate(3deg)}
+.binder::before{content:"";position:absolute;left:-14px;top:12%;bottom:12%;width:14px;border-radius:8px 0 0 8px;background:repeating-linear-gradient(#B9BCC3 0 10px,#6E727A 10px 12px,transparent 12px 54px)}
+@media (max-width:920px){.binder{inset:2% 2% 0 6%}}
+.receipt{position:relative;width:min(340px,86vw);transform:rotate(-3.5deg);filter:drop-shadow(0 26px 34px rgba(0,0,0,.55));transition:transform .4s}
+.stage:hover .receipt{transform:rotate(-1.5deg) translateY(-4px)}
+.edge{display:block;width:100%;height:10px}
+.paper{background:var(--r-pp);color:var(--r-ink);padding:22px 24px 20px;font-family:var(--f-body);font-size:12px;position:relative;transition:background .3s,color .3s}
+.p-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.p-title{font-family:var(--f-round);font-weight:700;font-size:34px;line-height:.95;letter-spacing:-.02em}
+.p-no{font-family:var(--f-mono);font-size:10px;text-align:right;opacity:.75;line-height:1.5}
+.p-pill{display:inline-block;margin-top:8px;background:var(--r-bd);border-radius:99px;padding:3px 10px;font-family:var(--f-mono);font-size:10px;font-weight:700;transition:background .3s}
+.p-to{margin:14px 0 10px;font-size:11px;line-height:1.45}
+.p-to b{display:block;font-size:13px}
+.dash{border:0;border-top:1.5px dashed currentColor;opacity:.35;margin:10px 0}
+.p-row{display:flex;justify-content:space-between;gap:10px;padding:5px 0;font-size:12px}
+.p-row .n{font-weight:600}
+.p-row small{display:block;font-size:10px;opacity:.65;font-weight:400}
+.p-row .v{font-family:var(--f-mono);white-space:nowrap;text-align:right}
+.p-row s{display:block;font-size:10px;opacity:.55}
+.p-total{display:flex;justify-content:space-between;align-items:baseline;font-family:var(--f-mono);font-weight:700;font-size:17px;margin-top:4px}
+.p-terb{font-size:10px;font-style:italic;opacity:.7;margin-top:2px}
+.p-bar{display:flex;gap:2px;height:30px;margin-top:14px;align-items:stretch}
+.p-bar i{background:currentColor;display:block}
+.p-foot{font-family:var(--f-mono);font-size:9px;opacity:.6;margin-top:4px;letter-spacing:.2em}
+.stamp{position:absolute;right:20px;top:96px;transform:rotate(-14deg);border:3px solid var(--r-stamp);color:var(--r-stamp);font-family:var(--f-mono);font-weight:700;font-size:22px;letter-spacing:.12em;padding:2px 12px;border-radius:8px;opacity:.85;mix-blend-mode:multiply;transition:color .3s,border-color .3s}
+.stamp::after{content:"";position:absolute;inset:3px;border:1.2px solid currentColor;border-radius:5px}
+.tape{position:absolute;top:-14px;left:50%;width:96px;height:28px;transform:translateX(-50%) rotate(-4deg);background:rgba(232,232,236,.55);box-shadow:0 1px 2px rgba(0,0,0,.15);backdrop-filter:blur(1px)}
+.ticket{position:absolute;left:-30px;bottom:-4px;transform:rotate(-12deg);background:var(--r-pop);color:#1B1B1F;font-family:var(--f-mono);font-size:10px;font-weight:700;padding:8px 14px;border-radius:6px;letter-spacing:.08em;transition:background .3s;-webkit-mask:radial-gradient(circle 6px at 0 50%,#0000 98%,#000) left/51% 100% no-repeat,radial-gradient(circle 6px at 100% 50%,#0000 98%,#000) right/51% 100% no-repeat;mask:radial-gradient(circle 6px at 0 50%,#0000 98%,#000) left/51% 100% no-repeat,radial-gradient(circle 6px at 100% 50%,#0000 98%,#000) right/51% 100% no-repeat}
+@media (max-width:420px){.ticket{left:-10px}}
+.star{position:absolute;pointer-events:none}
+.spin{animation:spin 14s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.float{animation:float 5s ease-in-out infinite}
+@keyframes float{50%{transform:translateY(-10px) rotate(8deg)}}
 
-.stamp{position:absolute;left:150px;top:-6px;transform:rotate(-13deg);border:3px solid var(--stamp);border-radius:14px;padding:3px;opacity:.88;z-index:2}
-.stamp div{border:1.5px solid var(--stamp);border-radius:10px;padding:4px 16px 5px;text-align:center;color:var(--stamp)}
-.stamp b{display:block;font-family:var(--f-title);font-weight:700;font-size:36px;letter-spacing:.16em;line-height:1;padding-left:.16em}
-.stamp span{display:block;font-family:var(--f-mono);font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;margin-top:3px}
+.swatches{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:22px;position:relative;z-index:2}
+.sw{width:26px;height:26px;border-radius:50%;border:2px solid var(--bg);box-shadow:0 0 0 1.5px var(--line2);cursor:pointer;padding:0;background:var(--c)}
+.sw[aria-pressed="true"]{box-shadow:0 0 0 2px var(--lime)}
+.swlabel{text-align:center;font-family:var(--f-mono);font-size:11px;color:var(--muted);margin-top:10px}
 
-@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+/* ---------- marquee ---------- */
+.marquee{border-block:1px solid var(--line);background:var(--lime);color:var(--lime-ink);overflow:hidden;transform:rotate(-1.2deg);margin-block:10px 40px;width:104%;margin-left:-2%}
+.track{display:flex;width:max-content;animation:slide 32s linear infinite}
+.track span{font-family:var(--f-brand);font-weight:700;font-size:clamp(20px,2.6vw,30px);letter-spacing:-.03em;padding:14px 0;white-space:nowrap}
+.track span b{font-family:var(--f-mono);font-weight:700;margin:0 22px}
+@keyframes slide{to{transform:translateX(-50%)}}
+
+/* ---------- sections ---------- */
+section.blk{padding-block:72px}
+@media (max-width:720px){section.blk{padding-block:52px}}
+h2{font-family:var(--f-brand);font-weight:700;font-size:clamp(34px,5vw,62px);line-height:.95;letter-spacing:-.05em;margin:14px 0 18px;max-width:860px}
+h2 em{color:var(--lime)}
+.sub{color:var(--muted);max-width:560px;margin:0}
+
+/* before/after */
+.vs{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:36px}
+@media (max-width:720px){.vs{grid-template-columns:1fr}}
+.vcard{border:1px solid var(--line);border-radius:22px;padding:26px;background:var(--surface)}
+.vcard h3{font-family:var(--f-mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;margin:0 0 16px;color:var(--muted)}
+.vcard.good{background:var(--green);border-color:#1E5A52}
+.vcard.good h3{color:var(--lime)}
+.vcard ul{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.vcard li{display:flex;gap:12px;align-items:flex-start}
+.vcard li::before{font-family:var(--f-mono);font-weight:700;flex:none;width:20px}
+.vcard.bad li::before{content:"✕";color:#FF8A7E}
+.vcard.good li::before{content:"✓";color:var(--lime)}
+.vcard.bad li{color:#AEB9B5}
+
+/* bento */
+.bento{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:14px;margin-top:40px}
+.tile{grid-column:span 2;background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:24px;position:relative;overflow:hidden;min-height:200px;display:flex;flex-direction:column;justify-content:flex-end}
+.tile.w3{grid-column:span 3}
+.tile.w4{grid-column:span 4}
+.tile .ix{position:absolute;top:20px;left:24px;font-family:var(--f-mono);font-size:11px;color:var(--muted)}
+.tile h3{font-family:var(--f-brand);font-size:22px;font-weight:700;letter-spacing:-.03em;line-height:1.1;margin:0 0 6px}
+.tile p{margin:0;color:var(--muted);font-size:14.5px}
+.tile.lime{background:var(--lime);color:var(--lime-ink);border-color:var(--lime)}
+.tile.lime p,.tile.lime .ix{color:#35511E}
+@media (max-width:920px){.bento{grid-template-columns:repeat(2,minmax(0,1fr))}.tile,.tile.w3,.tile.w4{grid-column:span 1}.tile.w4{grid-column:span 2}}
+@media (max-width:560px){.bento{grid-template-columns:minmax(0,1fr)}.tile,.tile.w3,.tile.w4{grid-column:span 1}}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:auto;padding-top:34px}
+.chips i{width:30px;height:30px;border-radius:50%;display:block;border:2px solid var(--surface)}
+.bigstamp{margin:30px 6px 24px auto;transform:rotate(-12deg);border:3px solid #FF6B7E;color:#FF6B7E;font-family:var(--f-mono);font-weight:700;font-size:28px;letter-spacing:.14em;padding:4px 16px;border-radius:10px}
+.terb{font-family:var(--f-mono);font-size:13px;margin:34px 0 auto;line-height:1.5}
+.terb b{display:block;font-size:24px;color:var(--lime-ink)}
+.terb span{font-style:italic;opacity:.8}
+.coret{margin:34px 0 auto;font-family:var(--f-mono)}
+.coret s{color:var(--muted);font-size:15px}
+.coret b{display:block;font-size:26px;color:var(--lime)}
+.phone{margin:20px auto auto;width:74px;height:128px;border:2px solid var(--line2);border-radius:16px;position:relative;display:grid;place-items:center}
+.phone::before{content:"";position:absolute;top:6px;width:20px;height:4px;border-radius:4px;background:var(--line2)}
+.phone span{width:46px;height:70px;background:var(--ink);border-radius:3px;opacity:.9;-webkit-mask:linear-gradient(#000 0 0) top/100% 18% no-repeat,repeating-linear-gradient(#000 0 3px,transparent 3px 9px) bottom/100% 70% no-repeat;mask:linear-gradient(#000 0 0) top/100% 18% no-repeat,repeating-linear-gradient(#000 0 3px,transparent 3px 9px) bottom/100% 70% no-repeat}
+.lock{font-family:var(--f-mono);font-size:44px;margin:24px 0 auto;line-height:1}
+.hist{margin:34px 0 auto;display:grid;gap:6px;font-family:var(--f-mono);font-size:12px}
+.hist div{display:flex;justify-content:space-between;gap:10px;border:1px solid var(--line2);border-radius:10px;padding:7px 10px}
+.hist em{font-style:normal;color:var(--lime)}
+
+/* steps */
+.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:40px;counter-reset:s}
+@media (max-width:820px){.steps{grid-template-columns:minmax(0,1fr)}}
+.step{border-top:1.5px solid var(--line2);padding-top:22px}
+.step .n{font-family:var(--f-brand);font-weight:700;font-size:72px;line-height:.8;letter-spacing:-.06em;color:transparent;-webkit-text-stroke:1.5px var(--lime)}
+.step h3{font-family:var(--f-brand);font-size:22px;letter-spacing:-.03em;margin:18px 0 6px}
+.step p{margin:0;color:var(--muted)}
+
+/* price */
+.price{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0;margin-top:40px;border:1px solid var(--line2);border-radius:28px;overflow:hidden}
+@media (max-width:820px){.price{grid-template-columns:minmax(0,1fr)}}
+.price-l{background:var(--green);padding:clamp(26px,4vw,44px)}
+.pl-tag{font-size:12px;letter-spacing:.16em;color:var(--lime)}
+.pl-num{font-family:var(--f-brand);font-weight:700;font-size:clamp(64px,10vw,112px);line-height:.9;letter-spacing:-.06em;margin:14px 0 14px;color:var(--ink)}
+.pl-num small{font-size:.32em;letter-spacing:-.02em;vertical-align:top;margin-right:6px;color:var(--lime)}
+.price-l p{color:#B5C7C1;margin:0 0 24px;max-width:360px}
+.price-r{list-style:none;margin:0;padding:clamp(26px,4vw,44px);display:grid;gap:14px;align-content:center;background:var(--surface)}
+.price-r li{display:flex;gap:12px;align-items:baseline}
+.price-r li::before{content:"✓";font-family:var(--f-mono);font-weight:700;color:var(--lime)}
+
+/* faq */
+.faq{margin-top:34px;border-top:1px solid var(--line)}
+details{border-bottom:1px solid var(--line)}
+summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:16px;padding:22px 0;font-family:var(--f-brand);font-weight:600;font-size:clamp(17px,2vw,21px);letter-spacing:-.02em}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";font-family:var(--f-mono);font-size:22px;color:var(--lime);transition:transform .2s;flex:none}
+details[open] summary::after{transform:rotate(45deg)}
+details p{margin:0 0 22px;color:var(--muted);max-width:720px}
+
+/* final cta */
+.final{position:relative;background:var(--lime);color:var(--lime-ink);border-radius:32px;padding:clamp(36px,7vw,84px) clamp(22px,6vw,72px);overflow:hidden;margin-block:40px 60px}
+.final h2{color:var(--lime-ink);font-size:clamp(40px,7.5vw,96px);margin:0 0 18px}
+.final p{max-width:480px;margin:0 0 28px;font-size:17px;color:#2D461A}
+.final .btn{background:var(--lime-ink);color:var(--lime);border-color:var(--lime-ink)}
+.final .btn:hover{box-shadow:0 12px 30px -12px rgba(14,42,18,.7)}
+.final .ghostword{position:absolute;right:-20px;bottom:-40px;font-family:var(--f-brand);font-weight:700;font-size:clamp(120px,22vw,300px);letter-spacing:-.07em;line-height:.8;color:transparent;-webkit-text-stroke:2px rgba(14,42,18,.16);pointer-events:none;user-select:none}
+
+footer{border-top:1px solid var(--line);padding-block:26px 40px;color:var(--muted);font-size:13px}
+footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:center}
+
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .7s,transform .7s}
+.reveal.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}html{scroll-behavior:auto}}
 </style>
+</head>
+<body>
 
-<div class="wrap">
-  <div class="topbar">
-    <div class="logo">
-      <svg class="mark" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="19" fill="none" stroke="var(--ring)" stroke-width="1.2"/><circle cx="20" cy="20" r="13.5" fill="none" stroke="var(--ring)" stroke-width="1.2"/><circle cx="20" cy="20" r="8" fill="var(--ink)"/><circle cx="25.5" cy="25.5" r="3.2" fill="var(--lime)"/></svg>
-      <b class="wordmark">nota<i></i></b><span>invoice untuk<br>konten kreator</span>
-    </div>
-    <div class="actions">
-      <button class="btn" id="btnHist" type="button" aria-expanded="false" aria-controls="histPanel">Riwayat <span id="histCount"></span></button>
-      <button class="btn ghost" id="btnNew" type="button">+ Invoice baru</button>
-    </div>
-  </div>
+<header class="wrap nav">
+  <a class="logo" href="./" aria-label="nota.">
+    <svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="19" fill="none" stroke="#33423D" stroke-width="1.2"/><circle cx="20" cy="20" r="13.5" fill="none" stroke="#33423D" stroke-width="1.2"/><circle cx="20" cy="20" r="8" fill="#EEF3F0"/><circle cx="25.5" cy="25.5" r="3.2" fill="#C4F36A"/></svg>
+    <b class="wordmark">nota<i></i></b>
+  </a>
+  <nav class="navlinks">
+    <a class="t" href="#fitur">Fitur</a>
+    <a class="t" href="#cara">Cara pakai</a>
+    <a class="t" href="#harga">Harga</a>
+    <a class="t" href="#faq">FAQ</a>
+    <a class="btn lime" href="https://lynk.id/itsannisa/5jv7438jxrko">Dapatkan nota <span class="arr">→</span></a>
+  </nav>
+</header>
 
-  <section class="panel" id="histPanel" hidden>
-    <div class="panel-head"><h2>Riwayat invoice</h2><button class="btn sm" type="button" id="histClose">Tutup</button></div>
-    <div class="hstats" id="histStats"></div>
-    <div class="hlist" id="histList"></div>
-    <div class="note" id="histNote"></div>
+<main>
+  <section class="wrap hero">
+    <div>
+      <span class="eyebrow">invoice untuk konten kreator</span>
+      <h1>Tagih brand.<br><span class="strike">Tanpa</span> <span class="hl">drama.</span></h1>
+      <p class="lede">Invoice endorse yang rapi, estetik, dan bikin kamu kelihatan pro — jadi PDF dalam 2 menit. Sekali bayar, tanpa langganan, langsung dari HP.</p>
+      <div class="cta-row">
+        <a class="btn lime big" href="https://lynk.id/itsannisa/5jv7438jxrko">Dapatkan nota. · Rp20.000 <span class="arr">→</span></a>
+        <a class="btn big" href="#cara">Lihat caranya</a>
+      </div>
+      <div class="ticks"><span>Sekali bayar</span><span>Tanpa langganan</span><span>PDF A4</span><span>Bisa di HP</span></div>
+    </div>
+
+    <div>
+      <div class="stage">
+        <div class="binder" aria-hidden="true"></div>
+        <svg class="star spin" style="left:2%;top:4%" width="62" height="62" viewBox="0 0 100 100" aria-hidden="true"><defs><linearGradient id="sv1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFF"/><stop offset=".35" stop-color="#C3C6CD"/><stop offset=".55" stop-color="#F4F5F7"/><stop offset="1" stop-color="#8E929B"/></linearGradient></defs><polygon points="50,7 61.8,36.8 93.7,39.8 69.0,59.2 77.0,90.2 50,73 23.0,90.2 31.0,59.2 6.3,39.8 38.2,36.8" fill="url(#sv1)" stroke="#878B94" stroke-width="2" stroke-linejoin="round"/></svg>
+        <svg class="star float" style="right:4%;top:14%" width="34" height="34" viewBox="-1 -1 26 26" aria-hidden="true"><defs><linearGradient id="sv2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFF"/><stop offset=".35" stop-color="#C3C6CD"/><stop offset=".55" stop-color="#F4F5F7"/><stop offset="1" stop-color="#8E929B"/></linearGradient></defs><path d="M12 1C13 8 16 11 23 12C16 13 13 16 12 23C11 16 8 13 1 12C8 11 11 8 12 1Z" fill="url(#sv2)" stroke="#878B94"/></svg>
+        <svg class="star float" style="right:10%;bottom:6%;animation-delay:-2s" width="46" height="46" viewBox="-1 -1 26 26" aria-hidden="true"><path d="M12 1C13 8 16 11 23 12C16 13 13 16 12 23C11 16 8 13 1 12C8 11 11 8 12 1Z" fill="url(#sv2)" stroke="#878B94"/></svg>
+
+        <div class="receipt" id="receipt">
+          <div class="tape" aria-hidden="true"></div>
+          <svg class="edge" id="edgeTop" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true"></svg>
+          <div class="paper">
+            <div class="p-head">
+              <div><div class="p-title">invoice</div><span class="p-pill">ENDORSE · IG REELS</span></div>
+              <div class="p-no">No. NT-0142<br>26 Nov 2026<br>Jatuh tempo 7 hr</div>
+            </div>
+            <div class="p-to">Ditagihkan ke<b>Glowlab Skincare</b>PIC: Marketing Team</div>
+            <hr class="dash">
+            <div class="p-row"><div class="n">1× Reels review<small>60 detik, + 3 IG Story</small></div><div class="v"><s>Rp 3.500.000</s>Rp 2.800.000</div></div>
+            <div class="p-row"><div class="n">1× TikTok repost<small>whitelist 30 hari</small></div><div class="v">Rp 900.000</div></div>
+            <div class="p-row"><div class="n">Usage rights ads<small>1 bulan</small></div><div class="v">Rp 500.000</div></div>
+            <hr class="dash">
+            <div class="p-total"><span>TOTAL</span><span>Rp 4.200.000</span></div>
+            <div class="p-terb">empat juta dua ratus ribu rupiah</div>
+            <div class="p-bar" id="bar" aria-hidden="true"></div>
+            <div class="p-foot">0142 2611 2026</div>
+            <div class="stamp" aria-hidden="true">LUNAS</div>
+          </div>
+          <svg class="edge" id="edgeBot" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true"></svg>
+          <div class="ticket" aria-hidden="true">★ PAID PROMOTE ★</div>
+        </div>
+      </div>
+      <div class="swatches" id="swatches" role="group" aria-label="Coba ganti tema warna"></div>
+      <div class="swlabel" id="swlabel">tema: Denim — klik buat ganti</div>
+    </div>
   </section>
 
-  <div class="grid">
-    <form class="form" id="form" autocomplete="off">
-      <div class="sample" id="sampleNote">
-        <span>Isian di bawah masih <b>data contoh</b>. Ganti dengan data kamu, nanti tersimpan otomatis di browser ini.</span>
-        <button type="button" id="btnClear">Kosongkan semua</button>
-      </div>
-
-      <section class="card">
-        <h2>Warna</h2>
-        <div class="swatches" id="swatches"></div>
-        <div class="swname" id="swName"></div>
-        <label class="custom"><input type="color" id="customColor" value="#1E4F8F"> Atau pilih warna sendiri</label>
-      </section>
-
-      <section class="card">
-        <h2>Font judul</h2>
-        <div class="stack">
-          <label class="l">Unggah file Soft Edge (.ttf, .otf, .woff)<input class="field" id="f_font" type="file" accept=".ttf,.otf,.woff,.woff2"></label>
-          <span class="hint" id="fontHint"></span>
-          <button class="btn ghost" type="button" id="btnFontReset" hidden>Kembali ke font bawaan</button>
-        </div>
-      </section>
-
-      <section class="card">
-        <h2>Status pembayaran</h2>
-        <div class="stack">
-          <label class="toggle"><input type="checkbox" id="s_paid" data-k="paid">Pasang cap LUNAS</label>
-          <label class="l">Tanggal dibayar<input class="field" id="s_paidDate" data-k="paidDate" type="date"></label>
-        </div>
-      </section>
-
-      <section class="card">
-        <h2>Profil kamu</h2>
-        <div class="stack">
-          <div class="row">
-            <label class="l">Nama<input class="field" id="c_name" data-k="creator.name"></label>
-            <label class="l">Handle / username<input class="field" id="c_handle" data-k="creator.handle"></label>
-          </div>
-          <div class="row">
-            <label class="l">Email<input class="field" id="c_email" data-k="creator.email" type="email"></label>
-            <label class="l">WhatsApp<input class="field" id="c_phone" data-k="creator.phone"></label>
-          </div>
-          <label class="l">Alamat / kota<input class="field" id="c_addr" data-k="creator.address"></label>
-          <label class="l">Logo atau foto (opsional)<input class="field" id="c_logo" type="file" accept="image/*"></label>
-          <span class="hint" id="logoHint"></span>
-        </div>
-      </section>
-
-      <section class="card">
-        <h2>Brand yang ditagih</h2>
-        <div class="stack">
-          <div class="row">
-            <label class="l">Nama brand<input class="field" id="b_brand" data-k="client.brand"></label>
-            <label class="l">PIC / up.<input class="field" id="b_pic" data-k="client.pic"></label>
-          </div>
-          <label class="l">Email brand<input class="field" id="b_email" data-k="client.email"></label>
-          <label class="l">Alamat brand<textarea class="field" id="b_addr" data-k="client.address" rows="2"></textarea></label>
-        </div>
-      </section>
-
-      <section class="card">
-        <h2>Detail invoice</h2>
-        <div class="stack">
-          <div class="row">
-            <label class="l">Nomor invoice<input class="field" id="i_no" data-k="inv.no"></label>
-            <label class="l">Nama campaign<input class="field" id="i_camp" data-k="inv.campaign"></label>
-          </div>
-          <div class="row">
-            <label class="l">Tanggal terbit<input class="field" id="i_issued" data-k="inv.issued" type="date"></label>
-            <label class="l">Jatuh tempo<input class="field" id="i_due" data-k="inv.due" type="date"></label>
-          </div>
-        </div>
-      </section>
-
-      <section class="card">
-        <h2>Deliverables</h2>
-        <div class="items" id="items"></div>
-        <div class="hint" style="margin-bottom:6px">Tambah cepat:</div>
-        <div class="chips" id="chips"></div>
-        <button class="btn ghost" type="button" id="btnAdd">+ Tambah baris</button>
-      </section>
-
-      <section class="card">
-        <h2>Potongan &amp; pajak</h2>
-        <div class="stack">
-          <div class="row">
-            <label class="l">Nama diskon<input class="field" id="t_discLabel" data-k="discountLabel"></label>
-            <label class="l">Diskon (Rp)<input class="field money" id="t_disc" data-k="discount" inputmode="numeric"></label>
-          </div>
-          <label class="toggle"><input type="checkbox" id="t_ppn" data-k="ppn">Tambah PPN 11%</label>
-          <label class="toggle"><input type="checkbox" id="t_pph" data-k="pph">Brand memotong PPh 23 (2%)</label>
-          <span class="hint">Centang PPh 23 kalau brand akan memotong pajak dari pembayaranmu, supaya totalnya sudah bersih.</span>
-        </div>
-      </section>
-
-      <section class="card">
-        <h2>Pembayaran &amp; catatan</h2>
-        <div class="stack">
-          <div class="row three">
-            <label class="l">Bank / e-wallet<input class="field" id="p_bank" data-k="bank.bank"></label>
-            <label class="l">No. rekening<input class="field" id="p_num" data-k="bank.number" inputmode="numeric"></label>
-            <label class="l">Atas nama<input class="field" id="p_holder" data-k="bank.holder"></label>
-          </div>
-          <label class="l">Info pembayaran lain (opsional)<input class="field" id="p_extra" data-k="bank.extra"></label>
-          <label class="l">Catatan untuk brand<textarea class="field" id="n_notes" data-k="notes" rows="3"></textarea></label>
-          <label class="l">Salam penutup<input class="field" id="n_sign" data-k="sign"></label>
-        </div>
-      </section>
-    </form>
-
-    <div class="previewcol">
-      <div class="previewhead"><div class="ph-title"><b>Pratinjau</b><span class="hint">Ukuran A4, persis seperti PDF-nya</span></div><button class="btn primary sm pdfbtn" id="btnPdfTop" type="button"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0l-5-5m5 5l5-5M4 19h16"/></svg><span class="pdflabel">Download PDF</span></button></div>
-      <div class="scaler" id="scaler"><div class="sheet" id="sheet"></div></div>
-      <button class="btn primary pdfbtn pdfbig" id="btnPdfBottom" type="button"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0l-5-5m5 5l5-5M4 19h16"/></svg><span class="pdflabel">Download PDF</span></button>
-    </div>
+  <div class="marquee" aria-hidden="true">
+    <div class="track" id="track"></div>
   </div>
-</div>
-<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script>
-(function(){
-const KEY = 'tagihan-manis-v2';
-/* ink = text & accent, bd = backdrop, pp = paper, pop = flower color, stamp = LUNAS stamp */
-const THEMES = [
-  {id:'sky',      name:'Langit',      ink:'#1E4F8F', bd:'#A9CDEE', pp:'#FFFBF2', pop:'#F07AA5', stamp:'#D6455D'},
-  {id:'lilac',    name:'Lilac',       ink:'#4F3DB8', bd:'#CFC7F4', pp:'#FFFCF6', pop:'#FFC94D', stamp:'#D6455D'},
-  {id:'matcha',   name:'Matcha',      ink:'#2C6544', bd:'#BEDCC3', pp:'#FFFCF2', pop:'#F3A3B8', stamp:'#C8434E'},
-  {id:'peach',    name:'Peach',       ink:'#A4472A', bd:'#F7CDB3', pp:'#FFFBF4', pop:'#7FB6E0', stamp:'#2F6FB0'},
-  {id:'bubble',   name:'Bubblegum',   ink:'#A3326A', bd:'#F5C2D8', pp:'#FFFBF7', pop:'#FFD25E', stamp:'#2E7D5B'},
-  {id:'butter',   name:'Butter',      ink:'#6E4A10', bd:'#F5DE95', pp:'#FFFDF5', pop:'#E87A5D', stamp:'#C0392B'},
-  {id:'mint',     name:'Mint',        ink:'#1C6762', bd:'#B6E4DB', pp:'#FFFDF6', pop:'#FF9E7A', stamp:'#D6455D'},
-  {id:'cherry',   name:'Cherry',      ink:'#9C2230', bd:'#F3BCB8', pp:'#FFFBF5', pop:'#6FAE7E', stamp:'#2C6B47'},
-  {id:'cocoa',    name:'Cocoa',       ink:'#583826', bd:'#DCC6B2', pp:'#FFFBF4', pop:'#E7A0B0', stamp:'#C0392B'},
-  {id:'denim',    name:'Denim',       ink:'#22326A', bd:'#B4BEE0', pp:'#FFFCF6', pop:'#F6C344', stamp:'#D6455D'},
-  {id:'sage',     name:'Sage',        ink:'#3F5240', bd:'#CFD8C4', pp:'#FFFDF6', pop:'#E9A07A', stamp:'#B5443B'},
-  {id:'mono',     name:'Monokrom',    ink:'#26262B', bd:'#DADADF', pp:'#FFFFFF', pop:'#B8B8C0', stamp:'#D6455D'}
-];
-const QUICK = [
-  {desc:'Instagram Reels', note:'1 video, maks. 60 detik', price:2500000},
-  {desc:'Instagram Story', note:'3 frame + link sticker', price:500000},
-  {desc:'TikTok Video', note:'1 video + 1x revisi', price:2000000},
-  {desc:'Carousel Feed', note:'5 slide', price:1500000},
-  {desc:'YouTube Shorts', note:'1 video', price:1500000},
-  {desc:'Usage Rights', note:'Whitelisting iklan 30 hari', price:1000000}
-];
-
-const pad = n => String(n).padStart(2,'0');
-const iso = d => d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
-const addDays = (s,n) => { const d = s ? new Date(s+'T00:00:00') : new Date(); d.setDate(d.getDate()+n); return iso(d); };
-const today = iso(new Date());
-const romawi = ['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'];
-const makeNo = seq => { const d=new Date(); return 'INV/'+d.getFullYear()+'/'+romawi[d.getMonth()]+'/'+String(seq).padStart(3,'0'); };
-
-function newId(){ return 'inv_' + Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
-function sample(){
-  return {
-    id:newId(), sample:true, theme:'sky', custom:'#1E4F8F', seq:7,
-    paid:true, paidDate:today,
-    creator:{name:'Nadia Putri', handle:'@nadiaputri.daily', email:'halo@nadiaputri.id', phone:'0812-3456-7890', address:'Bandung, Jawa Barat', logo:''},
-    client:{brand:'Kopi Senja Co.', pic:'Mbak Rara (Marketing)', email:'collab@kopisenja.co', address:'Jl. Braga No. 12, Bandung'},
-    inv:{no:makeNo(7), campaign:'Ramadan Glow Up', issued:today, due:addDays(today,14)},
-    items:[
-      {desc:'Instagram Reels', note:'1 video, maks. 60 detik\n1x revisi', qty:1, price:2500000, was:3000000},
-      {desc:'Instagram Story', note:'3 frame + link sticker', qty:3, price:500000, was:0},
-      {desc:'Usage Rights', note:'Whitelisting iklan 30 hari', qty:1, price:1000000, was:0}
-    ],
-    discountLabel:'Diskon kolaborasi', discount:250000, ppn:false, pph:false,
-    bank:{bank:'BCA', number:'1234567890', holder:'Nadia Putri', extra:'GoPay / OVO: 0812-3456-7890'},
-    notes:'Mohon kirim bukti transfer ke email atau WhatsApp ya.',
-    sign:'Senang bisa berkolaborasi!'
-  };
-}
-function blank(prev){
-  const s = sample();
-  return {
-    id:newId(), sample:false, theme:prev?prev.theme:'sky', custom:prev?prev.custom:'#1E4F8F', seq:prev?prev.seq:1,
-    paid:false, paidDate:today,
-    creator:prev?prev.creator:{name:'',handle:'',email:'',phone:'',address:'',logo:''},
-    client:{brand:'',pic:'',email:'',address:''},
-    inv:{no:makeNo(prev?prev.seq:1), campaign:'', issued:today, due:addDays(today,14)},
-    items:[{desc:'',note:'',qty:1,price:0,was:0}],
-    discountLabel:prev?prev.discountLabel:s.discountLabel, discount:0, ppn:prev?prev.ppn:false, pph:prev?prev.pph:false,
-    bank:prev?prev.bank:{bank:'',number:'',holder:'',extra:''},
-    notes:prev?prev.notes:s.notes, sign:prev?prev.sign:s.sign
-  };
-}
-
-let state = null;
-try { const raw = localStorage.getItem(KEY); state = raw ? JSON.parse(raw) : null; } catch(e){}
-if(!state){ // carry over a draft from the first version, if any
-  try {
-    const old = JSON.parse(localStorage.getItem('tagihan-manis-v1')||'null');
-    if(old && old.items && !old.sample){
-      const map = {ocean:'sky', ink:'mono'};
-      state = Object.assign(blank(null), old, {theme: map[old.theme] || old.theme});
-      state.items = old.items.map(it=>Object.assign({was:0}, it));
-    }
-  } catch(e){}
-}
-if(!state || !state.items) state = sample();
-if(!THEMES.some(t=>t.id===state.theme) && state.theme!=='custom') state.theme = 'sky';
-if(!state.id) state.id = newId();
-
-let saveT;
-function save(){ clearTimeout(saveT); saveT = setTimeout(()=>{ try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){} }, 300); }
-
-/* ---------- helpers ---------- */
-const esc = s => String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const nf = new Intl.NumberFormat('id-ID');
-const rp = n => 'Rp ' + nf.format(Math.round(n||0));
-const digits = v => { const d = String(v||'').replace(/[^\d]/g,''); return d ? parseInt(d,10) : 0; };
-const fmtDate = s => { if(!s) return '-'; const d = new Date(s+'T00:00:00'); return isNaN(d) ? '-' : d.toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'}); };
-const fmtShort = s => { if(!s) return '-'; const d = new Date(s+'T00:00:00'); return isNaN(d) ? '-' : pad(d.getDate())+'/'+pad(d.getMonth()+1)+'/'+d.getFullYear(); };
-const get = (o,p) => p.split('.').reduce((a,k)=>a&&a[k], o);
-const set = (o,p,v) => { const ks=p.split('.'); let t=o; ks.slice(0,-1).forEach(k=>{ t=t[k]=t[k]||{}; }); t[ks[ks.length-1]]=v; };
-const isHex = h => /^#[0-9a-f]{6}$/i.test(h||'');
-const rgb = h => [1,3,5].map(i=>parseInt(h.slice(i,i+2),16));
-const hex = a => '#'+a.map(v=>Math.round(Math.max(0,Math.min(255,v))).toString(16).padStart(2,'0')).join('');
-const mix = (a,b,t) => { const A=rgb(a), B=rgb(b); return hex(A.map((v,i)=>v+(B[i]-v)*t)); };
-const lum = h => { const [r,g,b]=rgb(h).map(v=>{v/=255;return v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4)}); return .2126*r+.7152*g+.0722*b; };
-
-function palette(){
-  if(state.theme==='custom'){
-    let c = isHex(state.custom) ? state.custom : '#1E4F8F';
-    const ink = lum(c) > .18 ? mix(c,'#000000', Math.min(.7, (lum(c)-.12)*1.4)) : c; // keep text readable on paper
-    return {ink, bd:mix(c,'#ffffff',.6), pp:'#FFFBF3', pop:'#F28AB0', stamp:'#D6455D', name:'Warna sendiri'};
-  }
-  return THEMES.find(t=>t.id===state.theme) || THEMES[0];
-}
-
-function terbilang(n){
-  n = Math.floor(Math.abs(n));
-  const s = ['','satu','dua','tiga','empat','lima','enam','tujuh','delapan','sembilan','sepuluh','sebelas'];
-  const t = x => {
-    if(x<12) return s[x];
-    if(x<20) return t(x-10)+' belas';
-    if(x<100) return t(Math.floor(x/10))+' puluh '+t(x%10);
-    if(x<200) return 'seratus '+t(x-100);
-    if(x<1000) return t(Math.floor(x/100))+' ratus '+t(x%100);
-    if(x<2000) return 'seribu '+t(x-1000);
-    if(x<1e6) return t(Math.floor(x/1000))+' ribu '+t(x%1000);
-    if(x<1e9) return t(Math.floor(x/1e6))+' juta '+t(x%1e6);
-    if(x<1e12) return t(Math.floor(x/1e9))+' miliar '+t(x%1e9);
-    return t(Math.floor(x/1e12))+' triliun '+t(x%1e12);
-  };
-  const out = n===0 ? 'nol' : t(n).replace(/\s+/g,' ').trim();
-  return out.charAt(0).toUpperCase()+out.slice(1)+' rupiah';
-}
-
-function totals(){
-  const sub = state.items.reduce((a,it)=>a+(Number(it.qty)||0)*(Number(it.price)||0),0);
-  const orig = state.items.reduce((a,it)=>a+(Number(it.qty)||0)*Math.max(Number(it.was)||0, Number(it.price)||0),0);
-  const disc = Math.min(state.discount||0, sub);
-  const base = sub - disc;
-  const ppn = state.ppn ? Math.round(base*0.11) : 0;
-  const pph = state.pph ? Math.round(base*0.02) : 0;
-  return {sub, orig, disc, base, ppn, pph, total: base + ppn - pph};
-}
-
-/* seeded random so edges and barcode stay the same for the same invoice */
-function rng(seed){ let h = 2166136261; for(const ch of String(seed)){ h ^= ch.charCodeAt(0); h = Math.imul(h, 16777619); } return () => { h ^= h << 13; h ^= h >>> 17; h ^= h << 5; return ((h>>>0) % 10000) / 10000; }; }
-
-/* ---------- SVG pieces (literal colors: the PDF renderer cannot read CSS variables inside SVG) ---------- */
-function edge(fill, bottom, seed){
-  const r = rng(seed), W = 560, H = 14; let pts = [];
-  for(let x=0; x<=W; x+=7){ pts.push(x+','+(3 + r()*9).toFixed(1)); }
-  const poly = bottom
-    ? `0,0 ${pts.map(p=>{const [x,y]=p.split(',');return x+','+(H-y)}).join(' ')} ${W},0`
-    : `0,${H} ${pts.join(' ')} ${W},${H}`;
-  return `<svg class="edge ${bottom?'bot':'top'}" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" aria-hidden="true"><polygon points="${poly}" fill="${fill}"/></svg>`;
-}
-const dots = (c, w=480) => `<svg class="dots" width="${w}" height="4" viewBox="0 0 ${w} 4" aria-hidden="true"><line x1="1" y1="2" x2="${w-1}" y2="2" stroke="${c}" stroke-width="1.6" stroke-dasharray="1.5 4" stroke-linecap="round"/></svg>`;
-function barcode(text, c){
-  const r = rng(text); let x = 0, rects = '';
-  while(x < 250){ const w = 1 + Math.floor(r()*3); rects += `<rect x="${x}" y="0" width="${w*1.3}" height="34" fill="${c}"/>`; x += w*1.3 + 1.2 + Math.floor(r()*3)*1.2; }
-  return `<svg width="${Math.ceil(x)}" height="34" viewBox="0 0 ${Math.ceil(x)} 34" aria-hidden="true">${rects}</svg>`;
-}
-const sparkle = (x,y,s,c,stroke) => `<svg class="deco" style="left:${x}px;top:${y}px" width="${s}" height="${s}" viewBox="-2 -2 28 28" aria-hidden="true"><path d="M12 1C13 8 16 11 23 12C16 13 13 16 12 23C11 16 8 13 1 12C8 11 11 8 12 1Z" fill="${c}" ${stroke?`stroke="${stroke}" stroke-width="1.6" stroke-linejoin="round"`:''}/></svg>`;
-/* chunky 5-point star sticker with a white die-cut border */
-function star(x,y,s,fill,ink,rot){
-  let pts = [];
-  for(let k=0;k<10;k++){ const r = k%2 ? 19 : 44, a = -Math.PI/2 + k*Math.PI/5; pts.push((50+r*Math.cos(a)).toFixed(1)+','+(52+r*Math.sin(a)).toFixed(1)); }
-  return `<svg class="deco" style="left:${x}px;top:${y}px;transform:rotate(${rot}deg)" width="${s}" height="${s}" viewBox="0 0 100 100" aria-hidden="true"><polygon points="${pts.join(' ')}" fill="#ffffff" stroke="#ffffff" stroke-width="14" stroke-linejoin="round"/><polygon points="${pts.join(' ')}" fill="${fill}" stroke="${ink}" stroke-width="2.5" stroke-linejoin="round"/></svg>`;
-}
-/* starburst sticker with text on top (text stays HTML so the PDF keeps the font) */
-function burst(x,y,fill,ink,line1,line2){
-  let pts = [];
-  for(let k=0;k<32;k++){ const r = k%2 ? 40 : 50, a = k*Math.PI/16; pts.push((55+r*Math.cos(a)).toFixed(1)+','+(55+r*Math.sin(a)).toFixed(1)); }
-  return `<div class="burst" style="left:${x}px;top:${y}px"><svg width="110" height="110" viewBox="0 0 110 110" aria-hidden="true"><polygon points="${pts.join(' ')}" fill="${fill}" stroke="${ink}" stroke-width="2.5" stroke-linejoin="round"/></svg><span>${line1}<br>${line2}</span></div>`;
-}
-/* binder clip holding the receipt */
-function clip(c){
-  const dark = mix(c,'#000000',.25), hi = mix(c,'#ffffff',.35);
-  return `<svg class="clip" width="150" height="78" viewBox="0 0 150 78" aria-hidden="true">
-    <path d="M45 40 L45 12 Q45 4 53 4 L97 4 Q105 4 105 12 L105 40" fill="none" stroke="#B9BEC8" stroke-width="5" stroke-linecap="round"/>
-    <path d="M45 40 L45 12 Q45 4 53 4 L97 4 Q105 4 105 12 L105 40" fill="none" stroke="#EEF0F4" stroke-width="2" stroke-linecap="round"/>
-    <path d="M14 34 Q14 28 20 28 L130 28 Q136 28 136 34 L142 66 Q143 72 137 72 L13 72 Q7 72 8 66 Z" fill="${c}"/>
-    <path d="M12 58 L138 58 L141 66 Q142 72 136 72 L14 72 Q8 72 9 66 Z" fill="${dark}"/>
-    <rect x="26" y="34" width="98" height="5" rx="2.5" fill="${hi}" fill-opacity=".7"/>
-  </svg>`;
-}
-/* barcode sticker, slightly tilted, peeking over the receipt corner */
-function tag(x,y,text){
-  return `<div class="tag" style="left:${x}px;top:${y}px">${barcode(text,'#1d1d22').replace('height="44"','height="34"')}<div>${esc(text.replace(/[^0-9]/g,'').padEnd(10,'0').slice(0,10).replace(/(\d{2})(\d{4})(\d{4})/,'$1 $2 $3'))}</div></div>`;
-}
-/* ---------- journal / binder pieces ---------- */
-const rgba = (h,a) => { const [r,g,b] = rgb(h); return `rgba(${r},${g},${b},${a})`; };
-let gid = 0;
-const SILVER = id => `<defs><linearGradient id="${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset=".35" stop-color="#C3C6CD"/><stop offset=".55" stop-color="#F4F5F7"/><stop offset="1" stop-color="#8E929B"/></linearGradient></defs>`;
-function silverStar(style, s){
-  const id = 'sv'+(gid++); let pts = [];
-  for(let k=0;k<10;k++){ const r = k%2 ? 20 : 46, a = -Math.PI/2 + k*Math.PI/5; pts.push((50+r*Math.cos(a)).toFixed(1)+','+(53+r*Math.sin(a)).toFixed(1)); }
-  return `<svg class="deco top" style="${style}" width="${s}" height="${s}" viewBox="0 0 100 100" aria-hidden="true">${SILVER(id)}<polygon points="${pts.join(' ')}" fill="url(#${id})" stroke="#878B94" stroke-width="2" stroke-linejoin="round"/></svg>`;
-}
-function silverSpark(style, s){
-  const id = 'sv'+(gid++);
-  return `<svg class="deco top" style="${style}" width="${s}" height="${s}" viewBox="-1 -1 26 26" aria-hidden="true">${SILVER(id)}<path d="M12 1C13 8 16 11 23 12C16 13 13 16 12 23C11 16 8 13 1 12C8 11 11 8 12 1Z" fill="url(#${id})" stroke="#878B94" stroke-width="1"/></svg>`;
-}
-function ring(){
-  const id = 'rg'+(gid++);
-  return `<svg width="76" height="34" viewBox="0 0 76 34" aria-hidden="true"><defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F7F8FA"/><stop offset=".5" stop-color="#A4A8B0"/><stop offset="1" stop-color="#E3E5E9"/></linearGradient></defs><circle cx="58" cy="17" r="5" fill="#2A2A30"/><path d="M58 17 C 58 2, 6 2, 6 17 C 6 32, 58 32, 58 17" fill="none" stroke="url(#${id})" stroke-width="6" stroke-linecap="round"/></svg>`;
-}
-
-/* halftone dot block */
-function halftone(x,y,cols,rows,c){
-  let d = '';
-  for(let r=0;r<rows;r++) for(let k=0;k<cols;k++){ d += `<circle cx="${k*14+7}" cy="${r*14+7}" r="${(2.6 - r*0.28).toFixed(2)}" fill="${c}"/>`; }
-  return `<svg class="deco" style="left:${x}px;top:${y}px" width="${cols*14}" height="${rows*14}" aria-hidden="true">${d}</svg>`;
-}
-
-/* ---------- render sheet ---------- */
-const sheet = document.getElementById('sheet');
-function renderSheet(){
-  const P = palette();
-  const mut = mix(P.ink, P.pp, .42);
-  const c = state.creator, b = state.client, i = state.inv, p = state.bank;
-  const T = totals();
-  const list = state.items.filter(it=>it.desc||it.price);
-
-  [['--bd',P.bd],['--pp',P.pp],['--ink2',P.ink],['--mut',mut],['--stamp',P.stamp]].forEach(([k,v])=>sheet.style.setProperty(k,v));
-
-  const itemsHtml = list.map((it,idx)=>{
-    const was = Number(it.was)||0, pr = Number(it.price)||0;
-    return `<div class="cols it">
-      <div class="n">${pad(idx+1)}</div>
-      <div><div class="t">${esc(it.desc||'Tanpa judul')}</div>${it.note?`<div class="d">${esc(it.note)}</div>`:''}</div>
-      <div class="q">Qty: ${esc(it.qty||0)}</div>
-      <div class="r">${was>pr?`<span class="was">${rp(was*(Number(it.qty)||0))}</span>`:''}<span class="p">${rp(pr*(Number(it.qty)||0))}</span></div>
-    </div>${dots(P.ink)}`;
-  }).join('') || `<div class="cols it"><div></div><div class="d">Belum ada deliverable.</div></div>${dots(P.ink)}`;
-
-  const stamp = state.paid ? `<div class="stamp"><div><b>LUNAS</b><span>Dibayar ${esc(fmtShort(state.paidDate))}</span></div></div>` : '';
-  const showOrig = T.orig > T.sub;
-
-  sheet.innerHTML = `
-    <div class="tabs"><i style="background:${P.pop}"></i><i style="background:${mix(P.bd,'#ffffff',.3)}"></i><i style="background:${P.ink}"></i></div>
-    <div class="cover"></div>
-    <div class="page2"></div>
-    <div class="page"></div>
-    <div class="rail"></div>
-    <div class="rings">${ring()}${ring()}${ring()}${ring()}${ring()}${ring()}</div>
-    <div class="ticket" style="background:${P.pop}"><span>No.</span><b>${esc(String((state.seq||1)).padStart(2,'0'))}</b></div>
-    <div class="paper">
-      <div class="tape" style="background:${rgba(P.pop,.55)}"></div>
-      ${edge(P.pp,false,(i.no||'')+'t')}
-      ${c.logo && c.logo.startsWith('data:image/') ? `<div class="p-logo"><img src="${esc(c.logo)}" alt=""></div>` : ''}
-      <div class="wm">${esc(c.name||'Nama Kamu')}</div>
-      ${c.handle?`<div class="handle">${esc(c.handle)}</div>`:''}
-      <div class="kicker"><span>Invoice</span><span>·</span><b>${esc(i.no||'-')}</b></div>
-
-      <div class="billto">
-        <div><div class="lab">Ditagihkan ke</div><div class="v">${esc(b.brand||'Nama brand')}</div>
-          <div class="s">${esc([b.pic?('u.p. '+b.pic):'', b.email, b.address].filter(Boolean).join('\n'))}</div></div>
-        <div><div class="lab">Campaign</div><div class="v">${esc(i.campaign||'-')}</div></div>
+  <section class="wrap blk reveal">
+    <span class="eyebrow">kenapa nota.</span>
+    <h2>Kamu kerja kayak pro.<br>Invoice-nya juga <em>harus.</em></h2>
+    <p class="sub">Brand menilai dari detail. Invoice yang rapi bikin pembayaran lebih cepat diproses — dan kamu kelihatan serius.</p>
+    <div class="vs">
+      <div class="vcard bad">
+        <h3>Biasanya</h3>
+        <ul>
+          <li>Ketik ulang di Word / Notes tiap ada job</li>
+          <li>Hitung total & terbilang manual, rawan salah</li>
+          <li>Tampilan seadanya, kelihatan amatir</li>
+          <li>Lupa invoice mana yang sudah dibayar</li>
+        </ul>
       </div>
-
-      <div class="cols thead"><div></div><div>Deliverable</div><div>Qty</div><div class="r">Harga</div></div>
-      ${dots(P.ink)}
-      ${itemsHtml}
-
-      <div class="sum">
-        ${stamp}
-        ${showOrig?`<div class="ln"><span>Harga normal:</span><span class="was">${rp(T.orig)}</span></div>`:''}
-        <div class="ln"><span>Subtotal:</span><span>${rp(T.sub)}</span></div>
-        ${T.disc?`<div class="ln"><span>${esc(state.discountLabel||'Diskon')}:</span><span>−${rp(T.disc)}</span></div>`:''}
-        ${state.ppn?`<div class="ln"><span>PPN (11%):</span><span>+${rp(T.ppn)}</span></div>`:''}
-        ${state.pph?`<div class="ln"><span>Dipotong PPh 23 (2%):</span><span>−${rp(T.pph)}</span></div>`:''}
-        <div class="grand"><span>Total tagihan:</span><b>${rp(T.total)}</b></div>
-        <div class="words">${esc(terbilang(T.total))}</div>
+      <div class="vcard good">
+        <h3>Pakai nota.</h3>
+        <ul>
+          <li>Isi form sekali, data kamu tersimpan</li>
+          <li>Total, diskon & terbilang otomatis</li>
+          <li>Desain struk estetik, 12 tema warna</li>
+          <li>Riwayat invoice + stempel LUNAS</li>
+        </ul>
       </div>
-
-      ${dots(P.ink)}
-      <div class="meta">
-        <div><span class="lab">Terbit</span>${esc(fmtShort(i.issued))}</div>
-        <div><span class="lab">Jatuh tempo</span>${esc(fmtShort(i.due))}</div>
-        <div><span class="lab">Status</span>${state.paid?'Lunas':'Menunggu bayar'}</div>
-      </div>
-      ${dots(P.ink)}
-
-      <div class="payrow">
-        <div class="pay"><div class="lab">Transfer ke</div><div class="bank">${esc(p.bank||'Nama bank')}</div><div class="acc">${esc(p.number||'—')}</div>
-          <div class="s">${esc((p.holder?'a.n. '+p.holder:'') + (p.extra?'\n'+p.extra:''))}</div></div>
-        <div>${state.notes?`<div class="lab">Catatan</div><div class="notes">${esc(state.notes)}</div>`:''}</div>
-      </div>
-
-      <div class="thx">Terima kasih sudah berkolaborasi ♡</div>
-      <div class="bar">${barcode((i.no||'')+(b.brand||''), P.ink)}<div class="cap">${esc((c.name||'Kreator') + ' · ' + (i.no||''))}</div></div>
-
-      <div class="foot">
-        <b>${esc(c.name||'')}</b><br>
-        ${esc(c.address||'')}${c.address?'<br>':''}${esc([c.phone, c.email].filter(Boolean).join(' | '))}
-        ${state.sign?`<div class="sig">${esc(state.sign)}</div>`:''}
-      </div>
-      ${edge(P.pp,true,(i.no||'')+'b')}
     </div>
-    ${silverStar('left:88px;top:74px;transform:rotate(-10deg)',58)}
-    ${silverStar('right:60px;top:92px;transform:rotate(12deg)',28)}
-    ${silverStar('right:82px;bottom:52px;transform:rotate(8deg)',68)}
-    ${silverSpark('left:100px;bottom:170px',26)}
-    ${silverSpark('right:70px;top:470px',20)}`;
-  fit();
-}
+  </section>
 
-/* ---------- scale preview ---------- */
-const scaler = document.getElementById('scaler');
-function fit(){
-  const w = scaler.clientWidth || 794;
-  const s = Math.min(1, w/794);
-  sheet.style.transform = `scale(${s})`;
-  scaler.style.height = (sheet.offsetHeight * s) + 'px';
-}
-if('ResizeObserver' in window) new ResizeObserver(fit).observe(scaler); else window.addEventListener('resize', fit);
-
-/* ---------- form binding ---------- */
-const form = document.getElementById('form');
-function fillForm(){
-  form.querySelectorAll('[data-k]').forEach(el=>{
-    const v = get(state, el.dataset.k);
-    if(el.type==='checkbox') el.checked = !!v;
-    else if(el.classList.contains('money')) el.value = v ? nf.format(v) : '';
-    else el.value = v==null ? '' : v;
-  });
-  document.getElementById('customColor').value = isHex(state.custom) ? state.custom : '#1E4F8F';
-  document.getElementById('sampleNote').hidden = !state.sample;
-  logoHint();
-  renderSwatches(); renderItems();
-}
-function logoHint(){ document.getElementById('logoHint').textContent = state.creator.logo ? 'Logo terpasang di atas nama. Pilih file lain untuk mengganti.' : 'Tanpa logo, nama kamu tampil sebagai judul struk.'; }
-form.addEventListener('input', e=>{
-  const el = e.target, k = el.dataset.k;
-  if(el.id==='customColor'){ state.custom = el.value; state.theme = 'custom'; renderSwatches(); changed(); return; }
-  if(!k) return;
-  let v = el.type==='checkbox' ? el.checked : el.value;
-  if(el.classList.contains('money')) v = digits(v);
-  set(state, k, v);
-  if(k==='inv.issued' && v && (!state.inv.due || state.inv.due < v)){ state.inv.due = addDays(v,14); document.getElementById('i_due').value = state.inv.due; }
-  if(k==='paid' && v && !state.paidDate){ state.paidDate = today; document.getElementById('s_paidDate').value = today; }
-  changed();
-});
-form.addEventListener('change', e=>{ if(e.target.classList.contains('money')){ const n = digits(e.target.value); e.target.value = n ? nf.format(n) : ''; } });
-form.addEventListener('submit', e=>e.preventDefault());
-
-document.getElementById('c_logo').addEventListener('change', e=>{
-  const f = e.target.files && e.target.files[0];
-  if(!f) return;
-  const r = new FileReader();
-  r.onload = () => {
-    const img = new Image();
-    img.onload = () => {
-      const m = 240, sc = Math.min(1, m/Math.max(img.width,img.height));
-      const cv = document.createElement('canvas'); cv.width = Math.round(img.width*sc); cv.height = Math.round(img.height*sc);
-      cv.getContext('2d').drawImage(img,0,0,cv.width,cv.height);
-      state.creator.logo = cv.toDataURL('image/png');
-      logoHint(); changed();
-    };
-    img.src = r.result;
-  };
-  r.readAsDataURL(f);
-});
-
-function changed(){ renderSheet(); save(); scheduleHistory(); }
-
-/* ---------- title font upload (kept in this browser only) ---------- */
-const FONT_KEY = 'tagihan-manis-font';
-let fontFace = null;
-function fontHint(name){
-  document.getElementById('fontHint').textContent = name
-    ? 'Dipakai: ' + name + '. Font ini tersimpan di browser ini saja.'
-    : 'Belum ada font diunggah. Sementara judul pakai Fredoka (atau Soft Edge kalau sudah terpasang di komputermu).';
-  document.getElementById('btnFontReset').hidden = !name;
-}
-async function useFont(buf, name){
-  const ff = new FontFace('SoftEdgeUpload', buf);
-  await ff.load();
-  if(fontFace) document.fonts.delete(fontFace);
-  document.fonts.add(ff); fontFace = ff;
-  fontHint(name); renderSheet();
-}
-const toB64 = buf => { let s = '', b = new Uint8Array(buf); for(let i=0;i<b.length;i+=0x8000) s += String.fromCharCode.apply(null, b.subarray(i,i+0x8000)); return btoa(s); };
-const fromB64 = s => { const bin = atob(s), b = new Uint8Array(bin.length); for(let i=0;i<bin.length;i++) b[i] = bin.charCodeAt(i); return b.buffer; };
-document.getElementById('f_font').addEventListener('change', async e=>{
-  const f = e.target.files && e.target.files[0]; if(!f) return;
-  try{
-    const buf = await f.arrayBuffer();
-    await useFont(buf.slice(0), f.name);
-    try{ localStorage.setItem(FONT_KEY, JSON.stringify({name:f.name, data:toB64(buf)})); toast('Font '+f.name+' terpasang.'); }
-    catch(err){ toast('Font terpasang, tapi terlalu besar untuk diingat browser. Unggah lagi saat buka berikutnya.'); }
-  }catch(err){ toast('File ini tidak bisa dibaca sebagai font. Coba file .ttf atau .otf.'); }
-  e.target.value = '';
-});
-document.getElementById('btnFontReset').addEventListener('click', ()=>{
-  if(fontFace){ document.fonts.delete(fontFace); fontFace = null; }
-  try{ localStorage.removeItem(FONT_KEY); }catch(e){}
-  fontHint(''); renderSheet(); toast('Kembali ke font bawaan.');
-});
-(function restoreFont(){
-  let saved = null;
-  try{ saved = JSON.parse(localStorage.getItem(FONT_KEY)||'null'); }catch(e){}
-  fontHint(saved && saved.name);
-  if(saved && saved.data) useFont(fromB64(saved.data), saved.name).catch(()=>fontHint(''));
-})();
-
-/* swatches: half backdrop, half ink */
-function renderSwatches(){
-  const box = document.getElementById('swatches');
-  box.innerHTML = THEMES.map(t=>`<button type="button" class="sw" id="sw_${t.id}" data-t="${t.id}" aria-pressed="${state.theme===t.id}" title="${t.name}" aria-label="Warna ${t.name}" style="background:linear-gradient(135deg, ${t.bd} 50%, ${t.ink} 50%)"></button>`).join('');
-  document.getElementById('swName').textContent = 'Dipilih: ' + palette().name;
-}
-document.getElementById('swatches').addEventListener('click', e=>{
-  const b = e.target.closest('[data-t]'); if(!b) return;
-  state.theme = b.dataset.t; renderSwatches(); changed();
-});
-
-/* items */
-const itemsBox = document.getElementById('items');
-function renderItems(){
-  itemsBox.innerHTML = state.items.map((it,idx)=>`
-    <div class="item" data-i="${idx}">
-      <span class="num">${pad(idx+1)}</span>
-      <button type="button" class="x" data-del="${idx}" aria-label="Hapus baris ${idx+1}">×</button>
-      <label class="l">Deliverable<input class="field" id="it_d_${idx}" data-f="desc" value="${esc(it.desc)}" placeholder="mis. Instagram Reels"></label>
-      <label class="l">Keterangan<textarea class="field" id="it_n_${idx}" data-f="note" rows="2" placeholder="durasi, revisi, dll.">${esc(it.note)}</textarea></label>
-      <div class="row three">
-        <label class="l">Qty<input class="field" id="it_q_${idx}" data-f="qty" type="number" min="0" value="${esc(it.qty)}"></label>
-        <label class="l">Harga (Rp)<input class="field money" id="it_p_${idx}" data-f="price" inputmode="numeric" value="${it.price?nf.format(it.price):''}"></label>
-        <label class="l">Harga normal (dicoret)<input class="field money" id="it_w_${idx}" data-f="was" inputmode="numeric" placeholder="opsional" value="${it.was?nf.format(it.was):''}"></label>
+  <section class="wrap blk" id="fitur">
+    <div class="reveal">
+      <span class="eyebrow">fitur</span>
+      <h2>Kecil, cepat, <em>niat.</em></h2>
+    </div>
+    <div class="bento">
+      <div class="tile w4 reveal">
+        <span class="ix">01</span>
+        <div class="chips" id="chips"></div>
+        <h3>12 tema warna + warna custom</h3>
+        <p>Dari Denim sampai Monokrom. Sesuaikan sama feed kamu, atau pakai kode warna brand sendiri.</p>
       </div>
-      <span class="hint warnhint" id="it_h_${idx}"${wasHint(it)?'':' hidden'}>${esc(wasHint(it))}</span>
-    </div>`).join('');
+      <div class="tile reveal">
+        <span class="ix">02</span>
+        <div class="bigstamp">LUNAS</div>
+        <h3>Stempel LUNAS</h3>
+        <p>Sekali klik, invoice berubah jadi bukti lunas.</p>
+      </div>
+      <div class="tile lime reveal">
+        <span class="ix">03</span>
+        <div class="terb"><b>Rp 4.200.000</b><span>“empat juta dua ratus ribu rupiah”</span></div>
+        <h3>Terbilang otomatis</h3>
+        <p>Nggak perlu ngetik angka jadi kata lagi.</p>
+      </div>
+      <div class="tile reveal">
+        <span class="ix">04</span>
+        <div class="coret"><s>Rp 3.500.000</s><b>Rp 2.800.000</b></div>
+        <h3>Harga coret</h3>
+        <p>Tunjukkan diskon spesial buat brand langganan.</p>
+      </div>
+      <div class="tile reveal">
+        <span class="ix">05</span>
+        <div class="hist"><div>NT-0142 <em>lunas</em></div><div>NT-0141 <span>baru</span></div><div>NT-0140 <em>lunas</em></div></div>
+        <h3>Riwayat invoice</h3>
+        <p>Semua invoice tersimpan otomatis. Buka lagi &amp; lanjut edit kapan pun.</p>
+      </div>
+      <div class="tile w3 reveal">
+        <span class="ix">06</span>
+        <div class="phone" aria-hidden="true"><span></span></div>
+        <h3>Jalan mulus di HP</h3>
+        <p>Bikin invoice di sela syuting. Download PDF A4 rapi, langsung kirim lewat WA atau email.</p>
+      </div>
+      <div class="tile w3 reveal">
+        <span class="ix">07</span>
+        <div class="lock" aria-hidden="true">[ ⌁ ]</div>
+        <h3>Data kamu tetap di HP kamu</h3>
+        <p>Tanpa daftar, tanpa server. Nomor rekening & data klien cuma tersimpan di browser kamu sendiri.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap blk" id="cara">
+    <div class="reveal">
+      <span class="eyebrow">cara pakai</span>
+      <h2>Tiga langkah. <em>Beres.</em></h2>
+    </div>
+    <div class="steps">
+      <div class="step reveal"><div class="n">01</div><h3>Isi data</h3><p>Nama kamu, brand, item kerjaan & harga. Rekening tersimpan buat invoice berikutnya.</p></div>
+      <div class="step reveal"><div class="n">02</div><h3>Pilih gaya</h3><p>Ganti tema warna, tambah logo, nyalakan stempel LUNAS kalau sudah dibayar.</p></div>
+      <div class="step reveal"><div class="n">03</div><h3>Download & kirim</h3><p>Klik Download PDF, kirim ke brand lewat WhatsApp atau email. Selesai.</p></div>
+    </div>
+  </section>
+
+  <section class="wrap blk" id="harga">
+    <div class="reveal">
+      <span class="eyebrow">harga</span>
+      <h2>Lebih murah dari <em>es kopi susu.</em></h2>
+    </div>
+    <div class="price reveal">
+      <div class="price-l">
+        <span class="mono pl-tag">SEKALI BAYAR</span>
+        <div class="pl-num"><small>Rp</small>20.000</div>
+        <p>Bayar sekali di Lynk.id, langsung dapat link + kode akses. Tanpa langganan.</p>
+        <a class="btn lime big" href="https://lynk.id/itsannisa/5jv7438jxrko">Dapatkan nota. sekarang <span class="arr">→</span></a>
+      </div>
+      <ul class="price-r">
+        <li>Invoice tanpa batas</li>
+        <li>12 tema warna + warna custom</li>
+        <li>Stempel LUNAS & terbilang otomatis</li>
+        <li>Harga coret untuk diskon</li>
+        <li>Riwayat invoice tersimpan</li>
+        <li>PDF A4, tanpa watermark</li>
+        <li>Bisa di HP & laptop</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="wrap blk" id="faq">
+    <div class="reveal">
+      <span class="eyebrow">faq</span>
+      <h2>Yang sering <em>ditanya.</em></h2>
+    </div>
+    <div class="faq reveal">
+      <details><summary>Bayarnya sekali atau langganan?</summary><p>Sekali bayar Rp20.000. Nggak ada langganan, nggak ada watermark, nggak ada batas jumlah invoice.</p></details>
+      <details><summary>Setelah bayar, gimana cara aksesnya?</summary><p>Begitu pembayaran di Lynk.id berhasil, kamu langsung dapat link aplikasi nota. dan kode akses. Masukkan kodenya sekali — browser di HP kamu akan mengingatnya.</p></details>
+      <details><summary>Harus bikin akun?</summary><p>Nggak perlu. Buka link dari Lynk.id, masukkan kode akses, langsung isi. Semua tersimpan otomatis di browser yang kamu pakai.</p></details>
+      <details><summary>Data rekening saya aman?</summary><p>Data kamu nggak dikirim ke server mana pun — cuma tersimpan di perangkat kamu. Kalau kamu hapus data browser atau ganti HP, riwayatnya ikut hilang, jadi simpan PDF-nya ya.</p></details>
+      <details><summary>Bisa pakai logo sendiri?</summary><p>Bisa. Upload logo kamu, dan pilih warna tema yang paling cocok sama branding kamu.</p></details>
+      <details><summary>Hasilnya format apa?</summary><p>PDF ukuran A4, satu halaman, siap dikirim atau dicetak.</p></details>
+    </div>
+  </section>
+
+  <section class="wrap">
+    <div class="final reveal">
+      <span class="ghostword" aria-hidden="true">nota.</span>
+      <h2>Job selesai?<br>Tagih sekarang.</h2>
+      <p>Invoice pertamamu bisa jadi sebelum kopi kamu dingin.</p>
+      <a class="btn big" href="https://lynk.id/itsannisa/5jv7438jxrko">Dapatkan nota. · Rp20.000 <span class="arr">→</span></a>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span><b class="wordmark" style="font-size:20px">nota<i></i></b>&nbsp; invoice untuk konten kreator</span>
+    <span class="mono">© 2026 · dibuat untuk kreator Indonesia</span>
+  </div>
+</footer>
+
+<script>
+const THEMES = [
+  {name:'Langit',ink:'#1E4F8F',bd:'#A9CDEE',pp:'#FFFBF2',pop:'#F07AA5',stamp:'#D6455D'},
+  {name:'Lilac',ink:'#4F3DB8',bd:'#CFC7F4',pp:'#FFFCF6',pop:'#FFC94D',stamp:'#D6455D'},
+  {name:'Matcha',ink:'#2C6544',bd:'#BEDCC3',pp:'#FFFCF2',pop:'#F3A3B8',stamp:'#C8434E'},
+  {name:'Peach',ink:'#A4472A',bd:'#F7CDB3',pp:'#FFFBF4',pop:'#7FB6E0',stamp:'#2F6FB0'},
+  {name:'Bubblegum',ink:'#A3326A',bd:'#F5C2D8',pp:'#FFFBF7',pop:'#FFD25E',stamp:'#2E7D5B'},
+  {name:'Butter',ink:'#6E4A10',bd:'#F5DE95',pp:'#FFFDF5',pop:'#E87A5D',stamp:'#C0392B'},
+  {name:'Mint',ink:'#1C6762',bd:'#B6E4DB',pp:'#FFFDF6',pop:'#FF9E7A',stamp:'#D6455D'},
+  {name:'Cherry',ink:'#9C2230',bd:'#F3BCB8',pp:'#FFFBF5',pop:'#6FAE7E',stamp:'#2C6B47'},
+  {name:'Cocoa',ink:'#583826',bd:'#DCC6B2',pp:'#FFFBF4',pop:'#E7A0B0',stamp:'#C0392B'},
+  {name:'Denim',ink:'#22326A',bd:'#B4BEE0',pp:'#FFFCF6',pop:'#F6C344',stamp:'#D6455D'},
+  {name:'Sage',ink:'#3F5240',bd:'#CFD8C4',pp:'#FFFDF6',pop:'#E9A07A',stamp:'#B5443B'},
+  {name:'Monokrom',ink:'#26262B',bd:'#DADADF',pp:'#FFFFFF',pop:'#B8B8C0',stamp:'#D6455D'}
+];
+const root = document.documentElement;
+
+/* torn edges (seeded so they stay the same) */
+let seed = 7; const rnd = () => (seed = (seed*9301+49297)%233280)/233280;
+function torn(el, top){
+  let p = top ? ['0,10'] : ['0,0'];
+  for(let x=0;x<=100;x+=2.2){ const y = top ? 3 + rnd()*7 : 7 - rnd()*7; p.push(x.toFixed(1)+','+y.toFixed(1)); }
+  p.push(top ? '100,10' : '100,0');
+  el.innerHTML = `<polygon points="${p.join(' ')}" fill="var(--r-pp)" style="transition:fill .3s"/>`;
 }
-function wasHint(it){
-  const was = Number(it.was)||0, pr = Number(it.price)||0;
-  if(!was || was > pr) return '';
-  return 'Harga normal belum tampil di invoice karena harus lebih besar dari harga yang ditagih (' + rp(pr) + '). Isi harga sebelum diskon, misalnya ' + rp(Math.round(pr*1.2/50000)*50000 || pr+50000) + '.';
+torn(document.getElementById('edgeTop'), true);
+torn(document.getElementById('edgeBot'), false);
+
+/* barcode */
+const bar = document.getElementById('bar');
+for(let k=0;k<44;k++){ const i = document.createElement('i'); i.style.width = (1 + Math.round(rnd()*3)) + 'px'; if(rnd()<.18) i.style.opacity='0'; bar.appendChild(i); }
+
+/* theme swatches */
+const sw = document.getElementById('swatches'), lab = document.getElementById('swlabel');
+function apply(t){
+  root.style.setProperty('--r-ink',t.ink); root.style.setProperty('--r-bd',t.bd); root.style.setProperty('--r-pp',t.pp);
+  root.style.setProperty('--r-pop',t.pop); root.style.setProperty('--r-stamp',t.stamp);
+  lab.textContent = 'tema: ' + t.name;
+  sw.querySelectorAll('.sw').forEach(b => b.setAttribute('aria-pressed', b.dataset.n === t.name));
 }
-itemsBox.addEventListener('input', e=>{
-  const el = e.target, f = el.dataset.f; if(!f) return;
-  const i = +el.closest('.item').dataset.i;
-  state.items[i][f] = (f==='price'||f==='was') ? digits(el.value) : f==='qty' ? (parseFloat(el.value)||0) : el.value;
-  const h = document.getElementById('it_h_'+i);
-  if(h){ const t = wasHint(state.items[i]); h.textContent = t; h.hidden = !t; }
-  changed();
+THEMES.forEach(t => {
+  const b = document.createElement('button');
+  b.className = 'sw'; b.type = 'button'; b.dataset.n = t.name; b.title = t.name; b.setAttribute('aria-label','Tema ' + t.name);
+  b.style.setProperty('--c', t.ink);
+  b.addEventListener('click', () => apply(t));
+  sw.appendChild(b);
 });
-itemsBox.addEventListener('click', e=>{
-  const b = e.target.closest('[data-del]'); if(!b) return;
-  state.items.splice(+b.dataset.del,1);
-  if(!state.items.length) state.items.push({desc:'',note:'',qty:1,price:0,was:0});
-  renderItems(); changed();
-});
-document.getElementById('btnAdd').addEventListener('click', ()=>{
-  state.items.push({desc:'',note:'',qty:1,price:0,was:0}); renderItems(); changed();
-  const last = document.getElementById('it_d_'+(state.items.length-1)); if(last) last.focus();
-});
-document.getElementById('chips').innerHTML = QUICK.map((q,i)=>`<button type="button" class="chip" data-q="${i}">${esc(q.desc)}</button>`).join('');
-document.getElementById('chips').addEventListener('click', e=>{
-  const b = e.target.closest('[data-q]'); if(!b) return;
-  const q = QUICK[+b.dataset.q];
-  const empty = state.items.findIndex(it=>!it.desc && !it.price);
-  const row = {desc:q.desc, note:q.note, qty:1, price:q.price, was:0};
-  if(empty>=0) state.items[empty] = row; else state.items.push(row);
-  renderItems(); changed();
-});
+apply(THEMES[9]);
+lab.textContent = 'tema: Denim — klik warna buat ganti';
 
-/* new / clear */
-document.getElementById('btnNew').addEventListener('click', ()=>{
-  if(!state.sample){ clearTimeout(hT); saveHistoryNow(); }
-  if(state.sample){ state = blank(null); }
-  else { const seq = (state.seq||0)+1; state = blank(Object.assign({}, state, {seq})); }
-  fillForm(); changed(); toast('Invoice baru siap. Profil & rekening kamu tetap tersimpan.');
-});
-document.getElementById('btnClear').addEventListener('click', ()=>{
-  state = blank(null); fillForm(); changed(); toast('Form dikosongkan. Yuk isi data kamu.');
-});
+/* feature chips */
+const chips = document.getElementById('chips');
+THEMES.forEach(t => { const i = document.createElement('i'); i.style.background = `linear-gradient(135deg, ${t.ink} 50%, ${t.bd} 50%)`; chips.appendChild(i); });
 
-/* ---------- toast ---------- */
-const toastEl = document.getElementById('toast'); let toastT;
-function toast(msg){ toastEl.textContent = msg; toastEl.hidden = false; clearTimeout(toastT); toastT = setTimeout(()=>toastEl.hidden=true, 3200); }
+/* marquee */
+const words = ['ENDORSE','PAID PROMOTE','UGC','LIVE SELLING','AFFILIATE','BRAND DEAL','TIKTOK','IG REELS','YOUTUBE'];
+const line = words.map(w => `${w}<b>✦</b>`).join('');
+document.getElementById('track').innerHTML = `<span>${line}</span><span>${line}</span>`;
 
-/* ---------- PDF ---------- */
-const inClaude = !!(window.claude && window.claude.use);
-const dlPromise = inClaude ? window.claude.use('downloads').catch(()=>null) : Promise.resolve(null);
-const pdfBtns = Array.from(document.querySelectorAll('.pdfbtn'));
-const setPdfBusy = busy => pdfBtns.forEach(b=>{ b.disabled = busy; b.querySelector('.pdflabel').textContent = busy ? 'Menyiapkan PDF…' : 'Download PDF'; });
-
-async function buildPdf(o){
-  o = o || {};
-  if(document.fonts && document.fonts.ready) await document.fonts.ready;
-  const holder = document.createElement('div');
-  holder.style.cssText = 'position:fixed;left:-10000px;top:0;width:794px;pointer-events:none';
-  const clone = sheet.cloneNode(true);
-  clone.style.transform = 'none'; clone.removeAttribute('id');
-  holder.appendChild(clone); document.body.appendChild(holder);
-  try{
-    const canvas = await html2canvas(clone, {scale:o.scale||2, backgroundColor:palette().bd, useCORS:true, logging:false, windowWidth:794});
-    const { jsPDF } = window.jspdf;
-    const pdf = new jsPDF({unit:'mm', format:'a4', orientation:'portrait', compress:true});
-    const pageW = 210, pageH = 297;
-    const pagePx = Math.floor(canvas.width * pageH / pageW);
-    if(canvas.height <= pagePx + 4){
-      pdf.addImage(canvas.toDataURL('image/jpeg',o.q||0.95),'JPEG',0,0,pageW,canvas.height*pageW/canvas.width);
-    } else {
-      for(let y=0, pg=0; y<canvas.height; y+=pagePx, pg++){
-        const h = Math.min(pagePx, canvas.height-y);
-        const part = document.createElement('canvas'); part.width = canvas.width; part.height = h;
-        const ctx = part.getContext('2d'); ctx.fillStyle = palette().bd; ctx.fillRect(0,0,part.width,h);
-        ctx.drawImage(canvas,0,y,canvas.width,h,0,0,canvas.width,h);
-        if(pg) pdf.addPage();
-        pdf.addImage(part.toDataURL('image/jpeg',o.q||0.95),'JPEG',0,0,pageW,h*pageW/canvas.width);
-      }
-    }
-    pdf.setProperties({title:'Invoice '+(state.inv.no||''), author:state.creator.name||''});
-    return pdf;
-  } finally { holder.remove(); }
-}
-function fileName(){
-  const clean = s => String(s||'').replace(/[\\/:*?"<>|]+/g,'-').replace(/\s+/g,' ').trim();
-  return clean('Invoice ' + (state.inv.no||'') + (state.client.brand?' - '+state.client.brand:'') + (state.paid?' (LUNAS)':'')) + '.pdf';
-}
-
-pdfBtns.forEach(b=>b.addEventListener('click', async ()=>{
-  if(!window.jspdf || !window.html2canvas){ toast('Pembuat PDF belum termuat. Cek koneksi lalu muat ulang halaman.'); return; }
-  if(pdfBtns[0].disabled) return;
-  setPdfBusy(true);
-  try{
-    const pdf = await buildPdf();
-    const name = fileName();
-    if(!inClaude){ pdf.save(name); toast('PDF tersimpan: '+name); return; }
-    const dl = await dlPromise;
-    if(!dl){ toast('Download belum bisa di tampilan ini. Buka artifact ini di claude.ai lewat browser.'); return; }
-    try{
-      await dl.save({filename:name, data:pdf.output('blob')});
-      toast('PDF siap dikirim ke brand!');
-    }catch(err){
-      const code = err && err.code;
-      if(code==='declined') toast('Download dibatalkan.');
-      else if(code==='rate_limited') toast('Tunggu sebentar, lalu coba lagi.');
-      else if(code==='host_unavailable') toast('Aplikasi ini belum bisa menyimpan file. Buka di browser atau komputer.');
-      else toast('PDF gagal disimpan di sini. Coba buka di browser.');
-    }
-  }catch(e){
-    toast('PDF gagal dibuat. Coba muat ulang halaman.');
-  }finally{
-    setPdfBusy(false);
-  }
-}));
-
-/* ================= HISTORY =================
-   Each saved invoice is one document. On claude.ai it lives in the viewer's private
-   db subtree (data/users/<id>/inv_...), so it follows them across devices; a copy is
-   also kept in this browser, which is the only store when db is unavailable. */
-var HKEY = 'nota-history', hT = null, writing = Promise.resolve(), dbCol = null, histMode = 'local', histItems = [], migrated = false;
-const histPanel = document.getElementById('histPanel');
-
-function recFrom(s){
-  const st = JSON.parse(JSON.stringify(s));
-  if(st.creator) st.creator.logo = '';
-  delete st.sample;
-  const T = totals();
-  return {id:s.id, no:s.inv.no||'', brand:s.client.brand||'', campaign:s.inv.campaign||'', total:T.total,
-    paid:!!s.paid, paidDate:s.paidDate||'', issued:s.inv.issued||'', due:s.inv.due||'',
-    sentAt:s.sentAt||0, sentTo:s.sentTo||'', updatedAt:Date.now(), state:st};
-}
-function localAll(){ try{ return JSON.parse(localStorage.getItem(HKEY)||'{}') || {}; }catch(e){ return {}; } }
-function localWrite(all){ try{ localStorage.setItem(HKEY, JSON.stringify(all)); return true; }catch(e){ return false; } }
-function localPut(rec){ const all = localAll(); all[rec.id] = rec; if(!localWrite(all) && histMode==='local') toast('Penyimpanan browser penuh. Hapus beberapa invoice lama di Riwayat.'); if(histMode==='local') setHist(Object.values(all)); }
-function localDel(id){ const all = localAll(); delete all[id]; localWrite(all); if(histMode==='local') setHist(Object.values(all)); }
-
-function scheduleHistory(){ if(state.sample) return; clearTimeout(hT); hT = setTimeout(saveHistoryNow, 1200); }
-function saveHistoryNow(){
-  if(state.sample) return writing;
-  const rec = recFrom(state);
-  localPut(rec);
-  if(dbCol){
-    const ref = dbCol.doc(rec.id);
-    writing = writing.then(()=>ref.set(rec)).catch(e=>{
-      if(e && e.code==='quota_exceeded') toast('Riwayat online penuh. Hapus beberapa invoice lama.');
-      // this viewer may not save to their account (e.g. view-only access): keep history in the browser
-      else if(e && (e.code==='invalid_argument' || e.code==='revoked' || e.code==='not_granted' || e.code==='capability_disabled')) goLocal();
-    });
-  }
-  return writing;
-}
-
-function setHist(items){
-  histItems = items.filter(r=>r && r.id).sort((a,b)=>(b.updatedAt||0)-(a.updatedAt||0));
-  document.getElementById('histCount').textContent = histItems.length ? '('+histItems.length+')' : '';
-  renderHistory();
-}
-function setHistNote(t){ document.getElementById('histNote').textContent = t; }
-
-function renderHistory(){
-  const sum = histItems.reduce((a,r)=>{ a.all += r.total||0; if(r.paid) a.paid += r.total||0; else a.open += r.total||0; return a; }, {all:0, paid:0, open:0});
-  document.getElementById('histStats').innerHTML =
-    `<div class="hstat"><span>Total ditagih</span><b>${rp(sum.all)}</b></div>
-     <div class="hstat"><span>Sudah lunas</span><b>${rp(sum.paid)}</b></div>
-     <div class="hstat"><span>Belum dibayar</span><b>${rp(sum.open)}</b></div>`;
-  const box = document.getElementById('histList');
-  if(!histItems.length){ box.innerHTML = '<p class="hint">Belum ada invoice tersimpan. Setiap invoice yang kamu isi (bukan data contoh) otomatis masuk ke sini.</p>'; return; }
-  box.innerHTML = histItems.map(r=>{
-    const late = !r.paid && r.due && r.due < today;
-    const st = r.paid ? '<span class="st ok">Lunas</span>' : late ? '<span class="st late">Lewat tempo</span>' : '<span class="st wait">Belum lunas</span>';
-    return `<div class="hrow${r.id===state.id?' current':''}" data-id="${esc(r.id)}">
-      <div class="hmain"><b>${esc(r.brand||'Tanpa brand')}</b><span>${esc(r.no)}${r.campaign?' · '+esc(r.campaign):''}${r.id===state.id?' · sedang dibuka':''}</span></div>
-      <div class="hdate">${esc(fmtShort(r.issued))}</div>
-      <div class="htotal">${rp(r.total)}</div>
-      <div>${st}${r.sentAt?'<span class="st sent">Terkirim</span>':''}</div>
-      <div class="hact"><button class="btn sm" type="button" data-open>Buka</button><button class="btn sm ghost" type="button" data-del>Hapus</button></div>
-    </div>`;
-  }).join('');
-}
-
-document.getElementById('histList').addEventListener('click', e=>{
-  const row = e.target.closest('.hrow'); if(!row) return;
-  const id = row.dataset.id, rec = histItems.find(r=>r.id===id); if(!rec) return;
-  const act = row.querySelector('.hact');
-  if(e.target.closest('[data-open]')){
-    if(!state.sample){ clearTimeout(hT); saveHistoryNow(); }
-    const logo = state.creator.logo;
-    state = Object.assign(blank(null), JSON.parse(JSON.stringify(rec.state)), {id:rec.id, sample:false});
-    state.creator.logo = logo;
-    fillForm(); renderSheet(); save();
-    toggle(histPanel, false); window.scrollTo({top:0, behavior:'smooth'});
-    toast('Invoice '+(rec.no||'')+' dibuka.');
-  } else if(e.target.closest('[data-del]')){
-    act.innerHTML = '<span>Hapus invoice ini?</span><button class="btn sm primary" type="button" data-yes>Ya, hapus</button><button class="btn sm" type="button" data-cancel>Batal</button>';
-  } else if(e.target.closest('[data-cancel]')){
-    renderHistory();
-  } else if(e.target.closest('[data-yes]')){
-    localDel(id);
-    if(dbCol){ const ref = dbCol.doc(id); writing = writing.then(()=>ref.delete()).catch(()=>toast('Gagal menghapus dari riwayat online. Coba lagi nanti.')); }
-    if(id===state.id){ state.id = newId(); save(); }
-    toast('Invoice dihapus dari riwayat.');
-  }
-});
-
-const LOCAL_NOTE = 'Riwayat tersimpan di browser ini saja. Kalau hapus data browser atau pindah perangkat, riwayat tidak ikut. Simpan juga PDF-nya sebagai arsip.';
-function goLocal(){
-  if(histMode==='local') return;
-  dbCol = null; histMode = 'local';
-  setHist(Object.values(localAll()));
-  setHistNote(LOCAL_NOTE);
-}
-async function initHistory(){
-  setHist(Object.values(localAll()));
-  setHistNote(LOCAL_NOTE);
-  if(!(window.claude && window.claude.use)) return;
-  try{
-    const [db, user] = await Promise.all([window.claude.use('db'), window.claude.use('user')]);
-    const uid = user ? await user.id() : null;
-    if(!db || !uid) return;
-    let canWrite = null;
-    try{ canWrite = user.can ? await user.can('data.write') : null; }catch(e){}
-    if(canWrite === false) return; // view-only access: history stays in this browser
-    dbCol = db.collection('data/users/' + uid);
-    histMode = 'cloud';
-    setHistNote('Memuat riwayat dari akunmu…');
-    const timer = setTimeout(()=>setHistNote('Riwayat online belum bisa dimuat. Yang tampil adalah salinan di browser ini.'), 10000);
-    dbCol.onSnapshot(snap=>{
-      const items = snap.docs.filter(d=>d.id.indexOf('inv_')===0).map(d=>d.data());
-      if(histMode!=='cloud') return;
-      if(!snap.metadata.fromCache){ clearTimeout(timer); setHistNote('Riwayat tersimpan di akun claude.ai kamu dan hanya bisa dilihat olehmu. Ikut terbawa saat kamu buka dari perangkat lain.'); migrateLocal(items); }
-      setHist(items.length || !snap.metadata.fromCache ? items : Object.values(localAll()));
-    }, err=>{
-      clearTimeout(timer); goLocal();
-    });
-  }catch(e){ goLocal(); }
-}
-/* copy invoices saved in this browser before cloud history existed, once */
-function migrateLocal(cloudItems){
-  if(migrated || !dbCol) return; migrated = true;
-  const have = new Set(cloudItems.map(r=>r.id));
-  Object.values(localAll()).filter(r=>r && r.id && r.id.indexOf('inv_')===0 && !have.has(r.id)).forEach(r=>{
-    const ref = dbCol.doc(r.id); writing = writing.then(()=>ref.set(r)).catch(()=>{});
-  });
-}
-
-function toggle(panel, show){
-  panel.hidden = !show;
-  document.getElementById('btnHist').setAttribute('aria-expanded', String(show));
-}
-document.getElementById('btnHist').addEventListener('click', ()=>{ toggle(histPanel, histPanel.hidden); renderHistory(); });
-document.getElementById('histClose').addEventListener('click', ()=>toggle(histPanel,false));
-
-fillForm();
-renderSheet();
-initHistory();
-if(!state.sample) scheduleHistory();
-if(document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
-})();
+/* reveal on scroll */
+const io = 'IntersectionObserver' in window ? new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } }), {threshold:.12}) : null;
+document.querySelectorAll('.reveal').forEach(el => io ? io.observe(el) : el.classList.add('in'));
 </script>
-
 </body>
 </html>
